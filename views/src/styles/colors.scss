@@ -1,0 +1,37 @@
+// 双色配色方案：一个主色 + 黑白
+
+$primary: #fda34e;
+$text: #ffffff;
+
+html {
+    --bee-primary: #{$primary};
+    --bee-primary-hover: #{lighten($primary, 8%)};
+    --bee-primary-faded: #{fade-in(rgba($primary, 0), 0.12)};
+    --bee-text: #{$text};
+    --bee-bg-10: #{darken($text, 10%)};
+    --bee-bg-20: #{darken($text, 20%)};
+    --bee-bg-30: #{darken($text, 30%)};
+    --bee-bg-40: #{darken($text, 40%)};
+    --bee-bg-50: #{darken($text, 50%)};
+    --bee-bg-60: #{darken($text, 60%)};
+    --bee-bg-62: #{darken($text, 62%)};
+    --bee-bg-64: #{darken($text, 64%)};
+    --bee-bg-66: #{darken($text, 66%)};
+    --bee-bg-68: #{darken($text, 68%)};
+    --bee-bg-70: #{darken($text, 70%)};
+    --bee-bg-72: #{darken($text, 72%)};
+    --bee-bg-74: #{darken($text, 74%)};
+    --bee-bg-76: #{darken($text, 76%)};
+    --bee-bg-78: #{darken($text, 78%)};
+    --bee-bg-80: #{darken($text, 80%)};
+    --bee-bg-82: #{darken($text, 82%)};
+    --bee-bg-84: #{darken($text, 84%)};
+    --bee-bg-86: #{darken($text, 86%)};
+    --bee-bg-88: #{darken($text, 88%)};
+    --bee-bg-90: #{darken($text, 90%)};
+    --bee-bg-92: #{darken($text, 92%)};
+    --bee-bg-94: #{darken($text, 94%)};
+    --bee-bg-96: #{darken($text, 96%)};
+    --bee-bg-98: #{darken($text, 98%)};
+    --bee-bg-100: #{darken($text, 100%)};
+}

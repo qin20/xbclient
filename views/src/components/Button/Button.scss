@@ -1,0 +1,50 @@
+.ant-btn,
+.bee-btn {
+    --antd-wave-shadow-color: var(--bee-bg-40);
+
+    font-size: 12px;
+    color: var(--bee-text);
+    background-color: var(--bee-bg-68);
+    border-color: transparent;
+    border-radius: 6px;
+    height: 24px;
+
+    &:focus,
+    &:hover {
+        color: var(--bee-text);
+        background-color: var(--bee-bg-68);
+        border-color: transparent;
+    }
+
+    .anticon {
+        color: var(--bee-bg-30);
+    }
+
+    > .anticon + span, span + .anticon {
+        margin-left: 4px;
+    }
+}
+
+.bee-btn.ant-btn-primary,
+.bee-btn--main {
+    --antd-wave-shadow-color: var(--bee-primary);
+
+    &,
+    &:focus,
+    &:hover {
+        color: var(--bee-text);
+        background-color: var(--bee-primary);
+        border-color: transparent;
+    }
+
+    .anticon {
+        color: var(--bee-text);
+    }
+}
+
+.bee-btn--long {
+    padding: 4px 10px;
+    line-height: 1;
+    height: auto;
+    min-width: 70px;
+}

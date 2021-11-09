@@ -1,0 +1,26 @@
+.ant-radio-inner {
+    background-color: var(--bee-gb-100);
+    border-color: var(--bee-bg-84);
+
+    &:after {
+        background-color: var(--bee-bg-60);
+    }
+}
+
+.ant-radio-checked .ant-radio-inner {
+    border-color: var(--bee-bg-60);
+}
+
+.ant-radio-wrapper:hover .ant-radio,
+.ant-radio:hover .ant-radio-inner,
+.ant-radio-input:focus + .ant-radio-inner {
+    border-color: var(--bee-bg-60);
+}
+
+.ant-radio-checked::after {
+    border-color: var(--bee-bg-60);
+}
+
+.ant-radio-input:focus + .ant-radio-inner {
+    box-shadow: 0 0 0 3px var(--bee-bg-90);
+}

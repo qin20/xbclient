@@ -1,0 +1,43 @@
+.bee-page {
+    background-color: var(--bee-bg-94);
+
+    .ant-breadcrumb {
+        display: inline-block;
+        color: #ccc;
+
+        & a {
+            color: #ccc;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+
+        > span:last-child {
+            font-size: 18px;
+            color: #fff;
+        }
+    }
+
+    .ant-breadcrumb-separator {
+        color: #ccc;
+    }
+}
+
+.bee-page--title {
+    padding: 10px 0 10px;
+    margin-bottom: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.bee-page--title-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.bee-page--content {
+    padding-bottom: 100px;
+}

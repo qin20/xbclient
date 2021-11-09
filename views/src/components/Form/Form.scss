@@ -1,0 +1,19 @@
+.bee-form {
+    .ant-form-item-label > label {
+        font-size: 12px;
+        color: var(--bee-bg-60);
+    }
+
+    .ant-form-item-label {
+        padding-right: 6px;
+    }
+
+    .ant-form-item-label > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before {
+        color: var(--bee-primary-hover);
+    }
+
+    .ant-form-item-explain.ant-form-item-explain-error {
+        font-size: 11px;
+        padding-left: 12px;
+    }
+}

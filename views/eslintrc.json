@@ -1,0 +1,24 @@
+{
+    "extends": [
+        "eslint:recommended",
+        "google"
+    ],
+    "ignorePatterns": ["node_modules"],
+    "env": {
+        "node": false,
+        "browser": true,
+        "es6": true
+    },
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "ecmaFeatures": {
+            "experimentalObjectRestSpread": true,
+            "spread": true,
+            "arrowFunctions": true
+        }
+    },
+    "rules": {
+        "require-jsdoc": "off",
+        "max-len": ["error", { "ignoreStrings": true, "ignoreTemplateLiterals": true }]
+    }
+}

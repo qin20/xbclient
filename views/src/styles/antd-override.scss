@@ -1,0 +1,63 @@
+.ant-message {
+    left: 200px;
+    right: 0;
+    width: auto;
+}
+
+.ant-message-notice-content {
+    color: var(--bee-text);
+    background-color: var(--bee-bg-80);
+    border-radius: 6px;
+    font-size: 12px;
+    padding: 8px 12px;
+}
+
+.ant-message .anticon {
+    font-size: 13px;
+    margin-right: 6px;
+}
+
+.ant-empty {
+    color: var(--bee-bg-80);
+
+    * {
+        fill: var(--bee-bg-86);
+        stroke: var(--bee-bg-80);
+    }
+}
+
+.ant-btn-primary {
+    border-color: var(--bee-primary);
+    background: var(--bee-primary);
+}
+
+.ant-input-group-addon {
+    background-color: var(--bee-bg-68);
+    border-radius: 0 6px 6px 0;
+}
+
+.ant-btn.ant-btn-loading {
+    opacity: 0.2;
+
+    &::before {
+        display: none;
+    }
+}
+
+.ant-input-search > .ant-input-group > .ant-input-group-addon:last-child .ant-input-search-button {
+    border-radius: 0 6px 6px 0;
+    height: 28px;
+
+}
+
+.ant-tooltip-arrow-content {
+    background-color: var(--bee-bg-70);
+}
+
+.ant-tooltip-inner {
+    background-color: var(--bee-bg-70);
+    line-height: 1;
+    font-size: 12px;
+    min-height: auto;
+    color: var(--bee-bg-40);
+}

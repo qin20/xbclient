@@ -1,0 +1,27 @@
+{
+  "name": "autocut-electron",
+  "version": "1.0.0",
+  "main": "main/main.js",
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "electron-reload": "^2.0.0-alpha.1",
+    "electron-reloader": "^1.2.1",
+    "eslint": "^7.11.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-config-node": "^4.1.0",
+    "eslint-config-recommended": "^4.1.0",
+    "request": "^2.88.2"
+  },
+  "scripts": {
+    "start": "chcp 65001 && cross-env NODE_ENV=development DEBUG=* electron ."
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "debug": "^4.3.2",
+    "electron": "^15.3.0",
+    "electron-store": "^8.0.1",
+    "moment": "^2.29.1"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "name": "views",
+  "version": "0.1.0",
+  "private": true,
+  "devDependencies": {
+    "@babel/eslint-parser": "^7.15.7",
+    "@babel/eslint-plugin": "^7.14.5",
+    "@babel/plugin-proposal-class-properties": "^7.14.5",
+    "@babel/plugin-proposal-private-methods": "^7.14.5",
+    "classnames": "^2.3.1",
+    "eslint": "^7.11.0",
+    "eslint-config-google": "^0.14.0",
+    "http-proxy-middleware": "^2.0.1",
+    "node-sass": "^5.0.0",
+    "react-scripts": "4.0.3"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^4.7.0",
+    "antd": "^4.16.13",
+    "axios": "^0.21.4",
+    "cleave.js": "^1.6.0",
+    "color": "3.0",
+    "normalize.css": "^8.0.1",
+    "react": "^17.0.2",
+    "react-awesome-player": "^1.1.0",
+    "react-color": "^2.19.3",
+    "react-dom": "^17.0.2",
+    "react-image-crop": "^9.0.4",
+    "react-router": "^5.2.1",
+    "react-router-dom": "^5.3.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

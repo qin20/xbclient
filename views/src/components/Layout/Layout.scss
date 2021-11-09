@@ -1,0 +1,74 @@
+.bee-layout {
+    height: 100vh;
+}
+
+.bee-layout-header {
+    font-size: 12px;
+    height: 32px;
+    line-height: 32px;
+    background-color: var(--bee-bg-90);
+    border-bottom: 1px solid var(--bee-bg-86);
+    color: var(--bee-bg-60);
+    padding: 0 24px;
+}
+
+.bee-layout-content {
+    background-color: var(--bee-bg-100);
+    padding: 24px;
+}
+
+.bee-layout-sider {
+    position: fixed;
+    height: 100vh;
+    left: 0;
+    background-color: var(--bee-bg-90);
+    padding: 24px;
+    border-right: 1px solid var(--bee-bg-86);
+}
+
+.bee-layout-sider--logo {
+    padding-top: 40px;
+}
+
+.bee-layout-sider--title {
+    color: white;
+    font-size: 28px;
+    font-family: "FZYaoti";
+}
+
+.bee-layout-sider--slogen {
+    font-family: "Weibei SC";
+    font-weight: bold;
+    font-size: 12px;
+    color: var(--bee-bg-74);
+    letter-spacing: 0.1em;
+}
+
+.bee-layout-sider--menu {
+    display: flex;
+    flex-direction: column;
+    padding-top: 100px;
+}
+
+.bee-layout-sider--menu-item {
+    margin: 8px 0;
+    padding: 10px 16px;
+    color: var(--bee-bg-20);
+    border-radius: 10px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: all .3s;
+
+    &.bee-layout-sider--menu-item-active,
+    &:hover {
+        color: white;
+        background: var(--bee-bg-80);
+    }
+
+    > span {
+        font-size: 15px;
+        margin-right: 10px;
+    }
+}

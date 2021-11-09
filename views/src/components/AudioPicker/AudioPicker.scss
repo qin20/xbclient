@@ -1,0 +1,58 @@
+.bee-audioPicker--try-audio {
+    display: inline-flex !important;
+    align-items: center;
+    > .anticon {
+        margin-right: 4px;
+    }
+}
+
+.bee-audioPicker--divider {
+    &.ant-divider-with-text {
+        margin: 0;
+        margin-top: 22px;
+        margin-bottom: 8px;
+    }
+
+    .ant-divider-inner-text {
+        font-size: 13px;
+        color: #999;
+    }
+}
+
+.bee-audioPicker--radios label {
+    color: var(--bee-bg-50);
+    > span:nth-child(2) {
+        font-size: 12px;
+        min-width: 140px;
+        margin-bottom: 8px;
+    }
+
+    svg {
+        margin-right: 2px;
+    }
+
+    &.ant-radio-wrapper-checked {
+        > span:nth-child(2) {
+            background: var(--bee-bg-80);
+            border-radius: 4px;
+        }
+    }
+}
+
+.bee-audioPicker--sounds {
+    padding: 0 10px;
+}
+
+.bee-audioPicker--inline-item {
+    width: 33.3%;
+    float: left;
+    padding-right: 60px;
+}
+
+.bee-audioPicker--boy {
+    color: #5291ff;
+}
+
+.bee-audioPicker--girl {
+    color: #ff86a4;
+}

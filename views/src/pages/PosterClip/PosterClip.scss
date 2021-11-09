@@ -1,0 +1,35 @@
+@import '../../../node_modules/react-image-crop/dist/ReactCrop.css';
+
+.bee-poster-clip--corp {
+    img {
+        width: 100%;
+    }
+}
+
+.bee-poster-clip--preview {
+    background-color: #000;
+}
+
+.bee-poster-clip--container {
+    display: flex;
+
+    > div {
+        flex: none;
+        width: 50%;
+        padding: 20px;
+    }
+}
+
+.bee-poster-clip--inline-item {
+    position: absolute;
+    margin-top: -56px;
+    margin-left: 300px;
+    width: 100%;
+}
+
+.bee-poster-clip--color {
+    * {
+        overflow: hidden !important;
+        padding: 0 !important;
+    }
+}

@@ -1,0 +1,42 @@
+.bee-panel {
+    display: flex;
+    flex-direction: column;
+    align-content: stretch;
+
+    > div:first-child {
+        border-top-left-radius: 6px;
+        border-top-right-radius: 6px;
+    }
+
+    > div:last-child {
+        border-bottom-left-radius: 6px;
+        border-bottom-right-radius: 6px;
+    }
+}
+
+.bee-panel-header {
+    height: 36px;
+    line-height: 36px;
+    background-color: var(--bee-bg-84);
+    border-bottom: 1px solid var(--bee-bg-100);
+    padding: 0 16px;
+    color: var(--bee-bg-20);
+    flex: none;
+}
+
+.bee-panel-footer {
+    height: 32px;
+    line-height: 32px;
+    background-color: var(--bee-bg-86);
+    padding: 0 16px;
+    color: var(--bee-bg-20);
+    flex: none;
+}
+
+.bee-panel-content {
+    background-color: var(--bee-bg-90);
+    color: var(--bee-bg-50);
+    min-height: 50px;
+    padding: 16px;
+    flex: auto;
+}

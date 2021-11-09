@@ -1,0 +1,39 @@
+.ant-input {
+    --bee-input-bg: var(--bee-bg-88);
+
+    &,
+    .ant-form-item-has-error &:not(.ant-input-disabled):not(.ant-input-borderless).ant-input,
+    .ant-form-item-has-error &:not(.ant-input-disabled):not(.ant-input-borderless):hover
+    {
+        background-color: var(--bee-input-bg);
+        border-color: var(--bee-input-bg);
+        color: var(--bee-bg-40);
+        caret-color: var(--bee-primary);
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    &::-webkit-file-upload-button {
+        border: none;
+        background-color: var(--bee-input-bg);
+        border-radius: 6px;
+        color: var(--bee-bg-60)
+    }
+
+    &::placeholder {
+        color: var(--bee-bg-70);
+    }
+
+    &:hover {
+        border-color: var(--bee-bg-84);
+    }
+
+    &:focus,
+    &.ant-input-focused {
+        border-color: var(--bee-bg-84);
+        border-right-width: 1px !important;
+        outline: 0;
+        box-shadow: 0 0 0 2px var(--bee-bg-94);
+    }
+}

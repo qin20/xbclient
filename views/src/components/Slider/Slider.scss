@@ -1,0 +1,45 @@
+.bee-slider {
+    .ant-slider-rail {
+        background-color: var(--bee-bg-80);
+    }
+
+    .ant-slider-track {
+        background-color: var(--bee-bg-70);
+    }
+
+    .ant-slider-handle {
+        border-color: var(--bee-bg-60);
+        background-color: var(--bee-bg-50);
+
+        &:focus {
+            box-shadow: 0 0 0 5px var(--bee-primary-faded);
+        }
+
+        &.ant-tooltip-open {
+            border-color: var(--bee-bg-60);
+            background-color: var(--bee-bg-70);
+        }
+    }
+
+    &:hover {
+        .ant-slider-rail {
+            background-color: var(--bee-bg-74);
+        }
+
+        .ant-slider-track {
+            background-color: var(--bee-bg-60);
+        }
+
+        .ant-slider-handle {
+            &:not(.ant-tooltip-open),
+            &.ant-tooltip-open {
+                border-color: var(--bee-bg-50);
+                background-color: var(--bee-bg-60);
+            }
+        }
+    }
+}
+
+.bee-slider--tooltip {
+
+}

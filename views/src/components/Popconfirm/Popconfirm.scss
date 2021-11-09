@@ -1,0 +1,26 @@
+.bee-popconfirm {
+    .ant-popover-arrow-content,
+    .ant-popover-inner {
+        background-color: var(--bee-bg-86);
+        border: 1px solid var(--bee-bg-80);
+    }
+
+    .ant-popover-inner {
+        border-radius: 10px;
+    }
+
+    .ant-popover-message {
+        font-size: 12px;
+        color: var(--bee-bg-40);
+        display: flex;
+        align-items: center;
+    }
+
+    .anticon {
+        top: auto;
+    }
+
+    .ant-btn {
+        font-size: 10px;
+    }
+}
