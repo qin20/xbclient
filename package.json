@@ -4,24 +4,43 @@
   "main": "main/main.js",
   "devDependencies": {
     "cross-env": "^7.0.3",
+    "electron": "^15.3.0",
+    "electron-builder": "^22.13.1",
     "electron-reload": "^2.0.0-alpha.1",
     "electron-reloader": "^1.2.1",
     "eslint": "^7.11.0",
     "eslint-config-google": "^0.14.0",
-    "eslint-config-node": "^4.1.0",
-    "eslint-config-recommended": "^4.1.0",
-    "request": "^2.88.2"
+    "eslint-config-node": "^2.0.0",
+    "eslint-config-recommended": "^3.0.2"
   },
   "scripts": {
-    "start": "chcp 65001 && cross-env NODE_ENV=development DEBUG=* electron ."
+    "start": "chcp 65001 && cross-env NODE_ENV=development DEBUG=* electron .",
+    "build": "electron-builder --win --x64",
+    "postinstall": "electron-builder install-app-deps"
   },
-  "author": "",
+  "author": "qin20",
   "license": "ISC",
-  "description": "",
+  "description": "剪辑 中视频 电影解说",
   "dependencies": {
     "debug": "^4.3.2",
-    "electron": "^15.3.0",
     "electron-store": "^8.0.1",
-    "moment": "^2.29.1"
+    "moment": "^2.29.1",
+    "request": "^2.88.2"
+  },
+  "build": {
+    "productName": "小白剪辑",
+    "appId": "com.xiaobai.app",
+    "files": [
+      "bin",
+      "main",
+      "node_modules",
+      "views/build"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "zip"
+      ]
+    }
   }
 }

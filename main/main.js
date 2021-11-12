@@ -18,7 +18,7 @@ function createWindow() {
         win.loadURL(url.href);
         win.webContents.openDevTools();
     } else {
-        win.loadURL(`file://${path.resolve(__dirname, '../renderer/index.html')}`);
+        win.loadURL(`file://${path.resolve(__dirname, '../views/build/index.html')}`);
     }
 
     win.maximize();
