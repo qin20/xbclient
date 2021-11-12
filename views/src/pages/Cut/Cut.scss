@@ -26,11 +26,11 @@
 .bee-cut--col-3 {
     display: flex;
     flex: 1;
-    max-height: calc(100% - 382px);
+    max-height: calc(100% - 404px);
 }
 
 .bee-cut--clips-panel {
-    height: 394px;
+    height: 400px;
 }
 
 .bee-cut--clips {
@@ -299,4 +299,82 @@ textarea.bee-cut--clip-srt {
     justify-content: center;
     box-shadow: 0 0 10px rgba(0,0,0,.3);
     padding: 10px;
+}
+
+.bee-cut--priview {
+    min-height: 450px;
+
+    .bee-spin {
+        margin: auto;
+        display: block;
+        padding-top: 200px;
+    }
+}
+
+.bee-cut--preview-button {
+    font-size: 16px;
+    padding: 0;
+    min-width: 28px;
+    height: 22px;
+    padding-top: 2px;
+    vertical-align: middle;
+    margin-top: -2px;
+    line-height: 0;
+}
+
+.bee-cut--export-modal  {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.bee-cut--export-preview {
+    width: 320px;
+    height: 320px;
+    display: flex;
+    align-items: center;
+}
+
+.bee-cut--export-img {
+    background-color: var(--bee-bg-100);
+    width: 320px;
+    height: 180px;
+    margin: auto;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.bee-cut--export-ratio {
+    display: flex;
+    align-items: end;
+    font-size: 12px;
+    justify-content: center;
+    color: var(--bee-bg-60);
+
+    > * {
+        margin: 0 10px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+    p {
+        margin: 0;
+    }
+}
+
+.bee-cut--export-ratio-16-9 {
+    width: 32px;
+    height: 18px;
+    border: 1px solid var(--bee-bg-78);
+    background-color: var(--bee-bg-90);
+    margin: 10px auto;
+}
+
+.bee-cut--export-ratio-9-16 {
+    width: 18px;
+    height: 32px;
+    border: 1px solid var(--bee-bg-78);
+    background-color: var(--bee-bg-90);
+    margin: 4px auto;
 }

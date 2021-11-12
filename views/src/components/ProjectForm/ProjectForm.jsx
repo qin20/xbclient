@@ -11,6 +11,7 @@ export default class ProjectForm extends React.Component {
         this.state = {
             submiting: false,
             _source: this.props.initialValues._source,
+            bgMusic: this.props.initialValues.bgMusic,
         }
         this.form = React.createRef();
     }
@@ -20,6 +21,7 @@ export default class ProjectForm extends React.Component {
         return {
             ...values,
             _source: this.state._source,
+            bgMusic: this.state.bgMusic,
         };
     }
 
@@ -27,6 +29,12 @@ export default class ProjectForm extends React.Component {
         const file = e.target.files[0];
         const _source = file ? file.path : null;
         this.setState({ _source });
+    }
+
+    onBgMusicChange = (e) => {
+        const file = e.target.files[0];
+        const bgMusic = file ? file.path : null;
+        this.setState({ bgMusic });
     }
 
     render() {
@@ -48,6 +56,10 @@ export default class ProjectForm extends React.Component {
                 </Form.Item>
                 <Form.Item label="保存路径" name="output">
                     <Input placeholder="请输入保存路径" />
+                </Form.Item>
+                <Form.Item label="背景音乐" name="bgMusic">
+                    <FilePicker onChange={this.onBgMusicChange} />
+                    <Input placeholder="请选择背景音乐" value={this.state.bgMusic} />
                 </Form.Item>
                 <Form.Item name="voice">
                     <AudioPicker />

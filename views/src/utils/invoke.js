@@ -21,7 +21,7 @@ export default async function invoke(channel, data) {
       throw resp;
     }
     const end = Date.now();
-    console.info(`[ipc-"${channel}"] done`, `(+${end - start}ms)`, [resp.data]);
+    console.info(`[ipc-"${channel}"] done`, `(+${end - start}ms)`, resp);
   } catch (e) {
     console.error(`[ipc] ${channel} fail: `, e);
     message.error(e.message || e.error || '未知错误');
@@ -30,11 +30,16 @@ export default async function invoke(channel, data) {
   return resp.data;
 }
 
-export function invoking(channel, data, callback) {
+invoke.invoking = (channel, data, callback) => {
   const { ipcRenderer } = window.electron;
-  ipcRenderer.on(channel, (...args) => {
-    console.info(`[ipc-"${channel}"] replying`, args);
-    callback.call(...args);
+  ipcRenderer.on(channel, (event, resp) => {
+    if (resp.code !== 0) {
+      console.error(`[ipc] ${channel} fail: `, resp);
+      message.error(resp.message || resp.error || '未知错误');
+      return;
+    }
+    console.info(`[ipc-"${channel}"] replying`, resp);
+    callback && callback(resp.data);
   });
   ipcRenderer.once(`${channel}-end`, () => {
     console.info(`[ipc-"${channel}"] end`);
@@ -42,19 +47,4 @@ export function invoking(channel, data, callback) {
   });
   console.info(`[ipc-"${channel}"] start`, [data]);
   ipcRenderer.send(channel, data);
-  let resp;
-  try {
-    const start = Date.now();
-    resp = await ipcRenderer.invoke.call(ipcRenderer, channel, data);
-    if (resp.code !== 0) {
-      throw resp;
-    }
-    const end = Date.now();
-    console.info(`[ipc-"${channel}"] done`, `(+${end - start}ms)`, [resp.data]);
-  } catch (e) {
-    console.error(`[ipc] ${channel} fail: `, e);
-    message.error(e.message || e.error || '未知错误');
-    throw e;
-  }
-  return resp.data;
-}
+};

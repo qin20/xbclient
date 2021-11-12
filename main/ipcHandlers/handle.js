@@ -7,7 +7,7 @@ function errorHandler(e) {
     return ipcError(e.message || e || '未知错误');
 }
 
-module.exports = function handle(channel, listener) {
+function handle(channel, listener) {
     const callback = async (...args) => {
         try {
             return await listener.call(null, ...args);
@@ -17,16 +17,24 @@ module.exports = function handle(channel, listener) {
     };
 
     ipcMain.handle(channel, callback);
-};
+}
 
-exports.handling = function(channel, listener) {
-    ipcMain.on(channel, (event, arg) => {
+function handling(channel, listener) {
+    ipcMain.on(channel, async (event, arg) => {
         const reply = (data) => {
             event.sender.send(channel, data);
         };
         const end = () => {
             event.sender.send(`${channel}-end`);
         };
-        listener(reply, end, arg);
+        try {
+            await listener(reply, end, arg);
+        } catch (e) {
+            reply(errorHandler(e));
+            end();
+        }
     });
-};
+}
+
+handle.handling = handling;
+module.exports = handle;

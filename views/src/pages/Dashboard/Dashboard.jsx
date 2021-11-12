@@ -57,7 +57,18 @@ export default class Dashboard extends React.Component {
     }
 
     onDecode = (project) => {
-        invoking('get:/projects/intra', project);
+        invoke.invoking('get:/projects/decode', project, (data) => {
+            this.setState(({ projects }) => {
+                for (let i = 0; i < projects.length; i++) {
+                    const pro = projects[i];
+                    if (pro.name === project.name) {
+                        pro.decodeProgress = data.decodeProgress;
+                        pro.source = data.source;
+                    }
+                }
+                return { projects };
+            });
+        });
     }
 
     async componentDidMount() {
@@ -75,25 +86,32 @@ export default class Dashboard extends React.Component {
                 <div className={cls('projects')}>
                     {
                         this.state.projects.map((p, i) => {
+                            const poster = `${(p.poster || '').replace(/\\/g, '/')}?_=${new Date(p.updateTime).getTime()}`;
                             return (
                                 <div className={cls('project')} key={p.id}>
                                     <div className={cls('project-poster-container')}>
                                         {
-                                            p.source ? (
+                                            p.source && +p.decodeProgress === 100 ? (
                                                 <Link to={`/projects/${p.id}`}>
                                                     <div
                                                         className={cls('project-poster')}
-                                                        style={{ backgroundImage: `url(${(p.poster || '').replace(/\\/g, '/')})`}}
+                                                        style={{ backgroundImage: `url(${poster})`}}
                                                     />
                                                 </Link>
                                             ) : (
-                                                <div
-                                                    className={cls('project-poster')}
-                                                    style={{
-                                                        backgroundImage: `url(${(p.poster || '').replace(/\\/g, '/')})`,
-                                                        opacity: 0.5,
-                                                    }}
-                                                />
+                                                <>
+                                                    <div className={cls('project-poster-mask')}
+                                                        style={{
+                                                            height: `${100 - (+p.decodeProgress || 0)}%`,
+                                                        }}
+                                                    />
+                                                    <div
+                                                        className={cls('project-poster')}
+                                                        style={{
+                                                            backgroundImage: `url(${poster})`,
+                                                        }}
+                                                    />
+                                                </>
                                             )
                                         }
                                         <Popconfirm
@@ -107,8 +125,8 @@ export default class Dashboard extends React.Component {
                                     </div>
                                     <p className={cls('project-name')}>{p.name}</p>
                                     {
-                                        p.source ? (
-                                            <p className={cls('project-meta')}>{p.size || '0k'} | {p.duration || '0.00 s'}</p>
+                                        p.source && +p.decodeProgress === 100 ? (
+                                            <p className={cls('project-meta')}>{`${p.clips.length}片段`} | {`${p.duration}`}</p>
                                         ) : (
                                             <Space size={0} split={<Divider type="vertical" />}>
                                                 <Link to={`/projects/edit/${p.id}`}>编辑</Link>

@@ -5,11 +5,12 @@ import ReactAwesomePlayer from 'react-awesome-player'
 import {
     LoadingOutlined, CheckCircleFilled, ExportOutlined,
     ManOutlined, WomanOutlined, PlusCircleFilled,
+    PlaySquareOutlined,
 }from '@ant-design/icons';
-import axios from '../../axios';
 import {
-    Button, message, notification,
-    Panel, Layout, Space,
+    Button, message, Spin,
+    Panel, Layout, Space, Modal,
+
 } from '../../components';
 import Clip from './Clip';
 import namespace from '../../utils/namespace';
@@ -20,14 +21,23 @@ import invoke from "../../utils/invoke";
 
 const cls = namespace('bee-cut');
 
+const ratioMap = {
+    xigua: '16/9',
+    douyin: '9/16',
+};
+
 class Editor extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             project: null,
             clips: [],
-            exportLoading: false,
             saving: false,
+            previewVisible: false,
+            previewSrc: '',
+            previewLoading: false,
+            exportModalVisible: false,
+            exportRatio: ratioMap.xigua,
         };
         this.playerOptions = {};
         this.sourcePalyerOptions = {};
@@ -38,6 +48,14 @@ class Editor extends React.Component {
         const project = await invoke('get:/projects', this.props.match.params.id);
         const clips = project.clips && project.clips.length ? project.clips : [this.getNewClip()];
         this.setState({ project, clips });
+    }
+
+    setXiguaRatio = () => {
+        this.setState({ exportRatio: ratioMap.xigua });
+    }
+
+    setDouyinRatio = () => {
+        this.setState({ exportRatio: ratioMap.douyin });
     }
 
     getNewClip() {
@@ -175,12 +193,6 @@ class Editor extends React.Component {
         }
     }
 
-    // getClipsData() {
-    //     return this.state.clips.map(({project, source, loading, ...data}) => {
-    //         return data;
-    //     });
-    // }
-
     saveProject = () => {
         clearTimeout(this.saveTimeout);
         this.setState({ saving: true });
@@ -244,24 +256,29 @@ class Editor extends React.Component {
         save && this.saveProject();
     }
 
-    exportVideo = () => {
-        this.setState({ exportLoading: true });
-        axios.get('/export', {
-            params: { project: this.project }
-        }).then(({ data }) => {
-            const args = {
-                message: '影片导出成功！',
-                description: `${data.src}`,
-                duration: 0,
-            };
-            notification.success(args);
-        }).finally(() => {
-            this.setState({ exportLoading: false });
-        });
+    previewVedio = async () => {
+        this.setState({ previewLoading: true, previewSrc: '', previewVisible: true });
+        const src = await invoke('get:/projects/preview', this.state.project);
+        this.setState({ previewLoading: false, previewSrc: src });
     }
 
-    canplay = () => {
-        this.video.play();
+    onPreviewClose = () => {
+        this.setState({ previewVisible: false });
+    }
+
+    showExportVideo = () => {
+        this.setState({ exportModalVisible: true });
+    }
+
+    exportClose = () => {
+        this.setState({ exportModalVisible: false });
+    }
+
+    exportVideo = () => {
+        invoke('get:/projects/export', {
+            project: this.state.project,
+            ratio: this.state.exportRatio,
+        });
     }
 
     render() {
@@ -293,9 +310,44 @@ class Editor extends React.Component {
                     )}
                     <span className={cls('name')}>{this.state.project && this.state.project.name}</span>
                     <span className={cls('buttons')}>
-                        <Button type="primary" onClick={this.exportVideo} loading={this.state.exportLoading}>
+                        <Button type="primary" onClick={this.showExportVideo}>
                             <ExportOutlined />导出
                         </Button>
+                        <Modal.Panel
+                            title="导出"
+                            visible={this.state.exportModalVisible}
+                            onCancel={this.exportClose}
+                            onOk={this.exportVideo}
+                        >
+                            <div className={cls('export-modal')}>
+                                <div className={cls('export-preview')}>
+                                    <div
+                                        className={cls('export-img')}
+                                        style={{
+                                            backgroundImage: `url(${this.state.project.poster.replace(/\\/g, '/')})`,
+                                            ...(this.state.exportRatio === ratioMap.xigua ? {
+                                                width: 320,
+                                                height: 180,
+                                            } : {
+                                                width: 180,
+                                                height: 320,
+                                            })
+                                        }}
+                                    />
+
+                                </div>
+                                <div className={cls('export-ratio')}>
+                                    <div onClick={this.setXiguaRatio}>
+                                        <div className={cls('export-ratio-16-9')}></div>
+                                        <p>16:9（西瓜）</p>
+                                    </div>
+                                    <div onClick={this.setDouyinRatio}>
+                                        <div className={cls('export-ratio-9-16')}></div>
+                                        <p>9:16（抖音）</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </Modal.Panel>
                     </span>
                 </Layout.Header>
                 <Layout.Content className={cls('content')}>
@@ -328,6 +380,7 @@ class Editor extends React.Component {
                             <Panel.Content className={cls('project-info')}>
                                 <div><span>作品名称：</span><span>{this.state.project.name}</span></div>
                                 <div><span>保存位置：</span><span>{this.state.project.output}</span></div>
+                                <div><span>背景音乐：</span><span>{this.state.project.bgMusic}</span></div>
                                 <div>
                                     <span>自动配音：</span>
                                     <span>
@@ -340,13 +393,20 @@ class Editor extends React.Component {
                                         <span>（{this.state.project.voice.desc}）</span>
                                     </span>
                                 </div>
-                                <div><span>配音音量：</span><span>{this.state.project.voice.volume}</span></div>
-                                <div><span>配音语速：</span><span>{this.state.project.voice.speech_rate}</span></div>
-                                <div><span>配音语调：</span><span>{this.state.project.voice.pitch_rate}</span></div>
                             </Panel.Content>
                             <Panel.Footer style={{ textAlign: 'right' }}>
                                 <Link to={`/projects/edit/${this.state.project.id}`}>
-                                    <Button long>修改</Button>
+                                    <Space>
+                                        <Button type="" onClick={this.clipAll} loading={loadingCount} long>
+                                            应用
+                                            {
+                                                !!loadingCount && (
+                                                    <span>({this.state.clips.length - loadingCount}/{this.state.clips.length})</span>
+                                                )
+                                            }
+                                        </Button>
+                                        <Button long>修改</Button>
+                                    </Space>
                                 </Link>
                             </Panel.Footer>
                         </Panel>
@@ -358,13 +418,8 @@ class Editor extends React.Component {
                                 <div>总时长: {this.state.project.duration}</div>
                             </div>
                             <Space>
-                                <Button type="" onClick={this.clipAll} loading={loadingCount} long>
-                                    重新生成
-                                    {
-                                        !!loadingCount && (
-                                            <span>({this.state.clips.length - loadingCount}/{this.state.clips.length})</span>
-                                        )
-                                    }
+                                <Button className={cls('preview-button')} onClick={this.previewVedio} long>
+                                    <PlaySquareOutlined />
                                 </Button>
                             </Space>
                         </Panel.Header>
@@ -394,6 +449,28 @@ class Editor extends React.Component {
                             </Space>
                         </Panel.Content>
                     </Panel>
+                    <Modal.Simple
+                        width={800}
+                        visible={this.state.previewVisible}
+                        onCancel={this.onPreviewClose}
+                    >
+                        <div className={cls('priview')}>
+                            {
+                                this.state.previewLoading ? <Spin /> : (
+                                    <ReactAwesomePlayer
+                                        options={{
+                                            autoplay: true,
+                                            preload: 'auto',
+                                            sources: [{
+                                                type: `video/mp4`,
+                                                src: this.state.previewSrc
+                                            }],
+                                        }}
+                                    />
+                                )
+                            }
+                        </div>
+                    </Modal.Simple>
                 </Layout.Content>
             </>
         );

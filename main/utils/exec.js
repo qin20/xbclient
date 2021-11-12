@@ -61,15 +61,17 @@ function execGetOutput(command, description, callback) {
             callback && callback(new Buffer(data).toString('utf-8').trim());
         });
 
-        cp.on('error', (error) => {
-            debug(`[${description}]失败 : ${util.inspect(error.stack)}`);
-            // reject(error);
+        cp.on('error', (e) => {
+            const error = `[${description}]失败 : ${util.inspect(e.stack)}`;
+            debug(error);
+            reject(error);
         });
 
         cp.on('exit', (exitCode) => {
             if (exitCode) {
-                debug(`[${description}]失败 : failed with exit code ${exitCode}`);
-                // reject(`${description} failed with exit code ${exitCode}`);
+                const error = `[${description}]失败 : failed with exit code ${exitCode}`;
+                debug(error);
+                reject(error);
             } else {
                 debug(`[${description}]成功！`);
                 resolve(Buffer.concat(buffers).toString('utf-8').trim());

@@ -10,4 +10,4 @@ exports.AUDIO_APP_KEY_LIST = [
     'zyVeguUpc7uH0Te8',
 ];
 // 阿里云语音合成token
-exports.AUDIO_TOKEN = '78089ae868c24ee0b07a0cec7bcc5d15';
+exports.AUDIO_TOKEN = 'b8e4d8409a2848f69a765cd54513db58';

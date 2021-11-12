@@ -1,0 +1,58 @@
+.bee-modal {
+    color: var(--bee-text);
+    font-size: 12px;
+}
+
+.bee-modal-simple {
+    padding: 0;
+
+    .ant-modal-body {
+        padding: 0;
+    }
+
+    .ant-modal-content {
+        background-color: var(--bee-bg-100);
+    }
+
+    .ant-modal-close {
+        color: var(--bee-text);
+        left: 100%;
+        background-color: var(--bee-bg-100);
+    }
+
+    .ant-modal-close-x {
+        font-size: 30px;
+    }
+}
+
+.bee-modal-panel {
+    .ant-modal-content {
+        background-color: var(--bee-bg-88);
+        border-radius: 10px;
+
+        > * {
+            border-color: var(--bee-bg-78);
+        }
+
+        > :first-child {
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        > :last-child {
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+    }
+
+    .ant-modal-header {
+        padding: 14px 10px;
+        background-color: transparent;
+    }
+
+    .ant-modal-title {
+        font-size: 12px;
+        color: var(--bee-bg-10);
+        line-height: 1;
+    }
+}

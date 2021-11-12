@@ -5,8 +5,6 @@ const debug = require('debug')('services:ffmpeg');
 const {exec, execGetOutput} = require('../utils/exec');
 const {formatTime, timeToNumber, numberToTime} = require('../utils/time');
 const audioSrv = require('./audio');
-const config = require('../config');
-// const projectSrv = require('./projects');
 const {app} = require('electron');
 
 /**
@@ -18,10 +16,17 @@ const {app} = require('electron');
  */
 async function ffmpeg(args, desc, options) {
     return exec(
-        // `${path.join(__dirname, '../../bin/ffmpeg.exe')} -y -hide_banner -loglevel error ${args}`,
         `${path.join(__dirname, '../../bin/ffmpeg.exe')} -y -hide_banner ${args}`,
         desc,
         options,
+    );
+}
+
+async function ffmpegGetOutput(args, desc, callback) {
+    return execGetOutput(
+        `${path.join(__dirname, '../../bin/ffmpeg.exe')} -y -hide_banner ${args}`,
+        desc,
+        callback,
     );
 }
 
@@ -35,43 +40,12 @@ async function ffprobe(args, desc) {
     return execGetOutput(`${path.join(__dirname, '../../bin/ffprobe.exe')} ${args}`, desc);
 }
 
-/**
- * 快速切分抖音视频
- * @param {object} params 切割的参数
- */
-async function dyClip(params) {
-    const {source, output, clips} = params;
-    const video = `${output}/douyin_all.mp4`;
-    await exec(
-        `${ffmpeg} -y -hide_banner -loglevel error -i "${source}" -vf "scale=1080:-1,pad=1080:1920:0:(oh-ih)/2" -c:a copy "${video}"`,
-        `转换视频分辨率`,
-    );
-    for (let i = 0; i < clips.length; i++) {
-        const clip = JSON.parse(clips[i]);
-        if (!clip.start) {
-            continue;
-        }
-        if (!clip.end) {
-            clip.end = await getMediaDuration(source);
-        }
-        await exec(
-            `ffmpeg -y -hide_banner -loglevel error -i "${video}" -ss ${clip.start} -to ${clip.end} -c:a copy "${output}/douyin_0${i + 1}.mp4"`,
-            `开始切割第${i + 1}个片段`,
-        );
-    }
-}
+async function decode(project, callback) {
+    const output = `${project.output}/${project.name}/decoded.mp4`;
+    const duration = await getMediaDuration(project._source);
 
-/**
- * 转成都是关键帧的视频，才能正确的切割和同步原声
- */
-async function intraSource(project) {
-    const config = projectSrv.getProjectConf(project);
-    const output = `${projectSrv.getDir(project)}/intra.mp4`;
-    projectSrv.updateConfig(project, {intra: '', intra_percentage: 0});
-    const duration = await getMediaDuration(config.source);
-
-    await execGetOutput(
-        `ffmpeg -hide_banner -y -i "${config.source}" -strict -2 -intra -c:v libx264 -r 24 -tune film -crf 28 -preset fast -profile:v main -vf "scale=w=1920:h=1080:force_original_aspect_ratio=2,crop=1920:1080,setsar=sar=1/1,setdar=dar=16/9" -c:a aac -ar 44100 -bsf:a aac_adtstoasc -ab 128k ${output}`,
+    await ffmpegGetOutput(
+        `-i "${project._source}" -strict -2 -intra -c:v libx264 -r 24 -tune film -crf 28 -preset fast -profile:v main -c:a aac -ar 44100 -bsf:a aac_adtstoasc -ab 128k "${output}"`,
         `视频转码`,
         (data) => {
             if (data.indexOf('frame') === 0) {
@@ -79,15 +53,19 @@ async function intraSource(project) {
                 for (let i = array.length - 1; i >= 0; i--) {
                     if (array[i].indexOf('time=') === 0) {
                         const t = array[i].split('=')[1];
-                        const percentage = (timeToNumber(t) / timeToNumber(duration) * 100).toFixed(2);
-                        projectSrv.updateConfig(project, {intra: '', intra_percentage: percentage});
+                        const decodeProgress = Math.min((
+                            timeToNumber(t) / timeToNumber(duration) * 100
+                        ).toFixed(2), 100);
+                        callback({
+                            decodeProgress,
+                        });
                         break;
                     }
                 }
             }
         },
     );
-    projectSrv.updateConfig(project, {intra: output, intra_percentage: 100});
+    callback({decodeProgress: 100, source: output});
 }
 
 /**
@@ -140,13 +118,6 @@ async function generateClipTTS(project, clip) {
     return [aSrc, sSrc];
 }
 
-async function adjustAudioDuration(output, silenctOutput, duration, ...inputs) {
-    inputs = inputs.filter((i) => i);
-    const inputString = inputs.map((i) => i ? `-i ${i}` : '').join(' ');
-    await exec(`ffmpeg -y -hide_banner -loglevel error -f lavfi -i anullsrc -t ${duration} -ar 44100 ${silenctOutput}`, '生成视频长度的静音频');
-    await exec(`ffmpeg -y -hide_banner -loglevel error ${inputString} -i ${silenctOutput} -filter_complex "amix=inputs=${inputs.length+1}:duration=longest" ${output}`, '合并原声、配音、静音频');
-}
-
 /**
  * 生成字幕文件
  * @param {string} output
@@ -186,11 +157,6 @@ async function getMediaDuration(src) {
     return formatTime(duration);
 }
 
-async function mergeTTS(output, audio, video) {
-    const command = `ffmpeg -y -hide_banner -loglevel error -i ${video} -i ${audio} -strict experimental -map 0:v:0 -qscale 0 -map 1:a:0 ${output}`;
-    await exec(command, '合并视频、音频');
-}
-
 async function mergeSrt(project, clip, video, srt) {
     const output = `${project.clipDir}/${clip.id}/video_srt.mp4`;
     const style = qs.stringify({
@@ -202,7 +168,7 @@ async function mergeSrt(project, clip, video, srt) {
         Outline: 1,
         Shadow: 0,
         Alignment: 2,
-        MarginV: 10,
+        MarginV: 30,
         Spacing: -0.5,
     }, ',', '=', {encodeURIComponent: (a) => a});
     const srtDir = path.resolve(path.dirname(srt)).replace(/\\/g, '/');
@@ -361,83 +327,24 @@ async function clearDir(dir, excludes=[]) {
     });
 }
 
-/**
- *
- * @returns
- */
-async function exportVideo(options) {
-    debug('开始导出视频...');
-    const name = options.project;
-    const dir = projectSrv.getDir(name);
-    const projectConf = projectSrv.getProjectConf(name);
+async function mergeClips(project) {
+    const projectDir = `${project.output}/${project.name}`;
 
-    const videoListSrc = `${dir}/video_list.txt`;
+    const videoListSrc = `${projectDir}/video_clip_list.txt`;
     const videoList = [];
-    projectConf.clips.forEach(function(clip) {
-        videoList.push(`file ${config.STATIC_DIR}/${clip.src.replace(/\?.+/, '')}`);
+    project.clips.forEach(function(clip) {
+        if (clip.src) {
+            videoList.push(`file ${clip.src.replace(/\?.+/, '')}`);
+        }
     });
-
     fs.writeFileSync(videoListSrc, videoList.join('\n'));
 
-    const vSrc = `${dir}/video.mp4`;
-    await exec(
-        `ffmpeg -y -hide_banner -loglevel error -f concat -safe 0 -i ${videoListSrc} -profile:v main -movflags +faststart ${vSrc}`,
-        '导出视频',
-    );
-
-    projectSrv.updateConfig(name, {output: vSrc});
-    return vSrc;
-}
-
-async function copyBg(project, src) {
-    const dir = projectSrv.getDir(project);
-    const output = `${dir}/bg.wav`;
-    await exec(
-        ` ffmpeg -y -hide_banner -loglevel error -i "${src}" ${output}`,
-        '合并视频',
+    const output = `${projectDir}/preview.mp4`;
+    await ffmpeg(
+        `-f concat -safe 0 -i "${videoListSrc}" -profile:v main -movflags +faststart "${output}"`,
+        '片段合成',
     );
     return output;
-}
-
-async function mergeBackground(params) {
-    const project = params.project;
-    const volume = params.volume;
-    const dir = projectSrv.getDir(project);
-    const projectConf = projectSrv.getProjectConf(project);
-    const vSrc = projectConf.output;
-    const bgSrc = projectConf.bg_audio;
-    if (fs.existsSync(bgSrc) && fs.existsSync(vSrc)) {
-        const output = `${dir}/video_bg.mp4`;
-        // ffmpeg -y -hide_banner -i .\video.mp4 -stream_loop -1 -i .\bg.mp3 -filter_complex '[1:a]volume=0.1[a1];[0:a][a1]amix=duration=first[aout]' -map [aout]:0 -map 0:v:0 -y ./video_bg.mp4
-        // ffmpeg -y -hide_banner -loglevel error -i ./bg.mp3 -q:a 0 -map a -vn -filter:a "volume=0.1" ./bg1.mp3
-        const duration = await getMediaDuration(vSrc);
-        const volumeAudio = `${dir}/bg_volume.wav`;
-        projectSrv.updateConfig(project, {bg_percentage: 0});
-        await exec(
-            `ffmpeg -hide_banner -loglevel error -y -i "${bgSrc}" -af "volume=${volume / 100}" ${volumeAudio}`,
-            '调整背景音乐声音大小',
-        );
-        await execGetOutput(
-            `ffmpeg -hide_banner -y -i ${vSrc} -stream_loop -1 -i ${volumeAudio} -filter_complex [0:a][1:a]amix -t ${duration} ${output}`,
-            '合成背景音乐',
-            (data) => {
-                if (data.indexOf('frame') === 0) {
-                    const array = data.split(/\s+/);
-                    for (let i = array.length - 1; i >= 0; i--) {
-                        if (array[i].indexOf('time=') === 0) {
-                            const t = array[i].split('=')[1];
-                            const percentage = (timeToNumber(t) / timeToNumber(duration) * 100).toFixed(2);
-                            projectSrv.updateConfig(project, {bg_percentage: percentage});
-                            break;
-                        }
-                    }
-                }
-            },
-        );
-        debug('背景音乐合成成功！');
-        projectSrv.updateConfig(project, {output_v_bg: output});
-        return output;
-    }
 }
 
 async function getPoster(src, output) {
@@ -447,7 +354,52 @@ async function getPoster(src, output) {
     );
 }
 
+async function getBgMusic(project, video) {
+    if (!project.bgMusic) {
+        return null;
+    }
+    const bgSrc1 = `${project.output}/${project.name}/背景音乐.wav`;
+    const duration = await getMediaDuration(video);
+    await ffmpeg(
+        `-i "${project.bgMusic}" ${bgSrc1}`,
+        '提取背景音乐',
+    );
+    const bgSrc2 = `${project.output}/${project.name}/背景音乐循环.wav`;
+    await ffmpeg(
+        `-stream_loop -1 -i "${bgSrc1}" -af "volume=${(project.bgVolume || 100) / 100}" -t ${duration} ${bgSrc2}`,
+        '调整背景音乐声音大小',
+    );
+    return bgSrc2;
+}
+
+async function exportVedio(project, ratio) {
+    const mergeSrc = await mergeClips(project);
+    let video;
+    if (ratio === '16/9') {
+        video = `${project.output}/${project.name}/${project.name}_16_9.mp4`;
+        await ffmpeg(
+            `-i "${mergeSrc}" -vf "scale=1920:-1:pad=1920:1080:(ow-iw)/2:(oh-ih)/2,setsar=sar=1/1,setdar=dar=16/9" -c:a copy ${video}`,
+            `视频转码`,
+        );
+    } else {
+        video = `${project.output}/${project.name}/${project.name}_9_16.mp4`;
+        await ffmpeg(
+            `-i "${mergeSrc}" -vf "scale=1080:-1,pad=1080:1920:0:(oh-ih)/2,setsar=sar=1/1,setdar=dar=9/16" -c:a copy ${video}`,
+            `视频转码`,
+        );
+    }
+    const bgMusic = await getBgMusic(project, video);
+    const output = `${project.output}/${project.name}/${project.name}.mp4`;
+    await ffmpeg(
+        `-i ${video} -i ${bgMusic} -filter_complex "[0:a][1:a]amerge[a]" -map 0:v -map "[a]" ${output}`,
+        '合成视频、音频 [3/3]',
+    );
+}
+
 module.exports = {
     clip,
     getPoster,
+    decode,
+    mergeClips,
+    exportVedio,
 };

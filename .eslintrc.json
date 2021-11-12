@@ -10,7 +10,7 @@
         "es6": true
     },
     "parserOptions": {
-        "ecmaVersion": "latest",
+        "ecmaVersion": 11,
         "ecmaFeatures": {
             "experimentalObjectRestSpread": true,
             "spread": true,

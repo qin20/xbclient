@@ -57,7 +57,7 @@ export default class Clip extends React.PureComponent {
 
         return (
             <div key={clip.id} className={cls('clip')}>
-                <Spin tip="生成中 ... " spinning={clip.loading || false}>
+                <Spin spinning={clip.loading || false}>
                     <div className={cls('clip-video')}>
                             {
                                 !!clip.src && (
