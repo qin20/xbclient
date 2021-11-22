@@ -1,0 +1,38 @@
+.bee-titlebar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    -webkit-app-region: drag;
+    color: var(--bee-bg-40);
+}
+
+.bee-titlebar--actions {
+    -webkit-app-region: no-drag;
+}
+
+.bee-titlebar--btns {
+    float: right;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1px;
+}
+
+.bee-titlebar--btn {
+    padding: 6px 16px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+
+    &:hover {
+        background-color: var(--bee-bg-80);
+    }
+}
+
+.bee-titlebar--btn-close {
+    font-size: 14px;
+
+    &:hover {
+        background-color: #6b0000;
+    }
+}

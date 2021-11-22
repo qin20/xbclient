@@ -50,7 +50,13 @@ export default class ProjectForm extends React.Component {
                 <Form.Item label="项目名称" name="name">
                     <Input placeholder="请输入名称" disabled={this.props.disableFields.indexOf('name') >= 0} />
                 </Form.Item>
-                <Form.Item label="选择影片" name="_source">
+                <Form.Item label="AppKey" name="AppKey">
+                    <Input placeholder="AppKey" />
+                </Form.Item>
+                <Form.Item label="AppToken" name="AppToken">
+                    <Input placeholder="请输入AppToken" />
+                </Form.Item>
+                <Form.Item label="影片路径" name="_source">
                     <FilePicker onChange={this.onSourceChange} />
                     <Input placeholder="请选择影片" value={this.state._source} />
                 </Form.Item>

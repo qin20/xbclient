@@ -2,6 +2,7 @@ const path = require('path');
 const BaseModel = require('./Base');
 const moment = require('moment');
 const {app} = require('electron');
+const store = require('../utils/store');
 
 class Projects extends BaseModel {
     constructor() {
@@ -36,6 +37,20 @@ class Projects extends BaseModel {
         };
     }
 
+    get(id) {
+        if (id) {
+            const project = super.get(id);
+            if (store.get('AppKey')) {
+                project.AppKey = store.get('AppKey');
+            }
+            if (store.get('AppToken')) {
+                project.AppToken = store.get('AppToken');
+            }
+            return project;
+        }
+        return super.get();
+    }
+
     getOutputPath(project) {
         return `${project.output}/${project.name}`;
     }
@@ -43,6 +58,16 @@ class Projects extends BaseModel {
     add(project=this.getDefaultProject()) {
         this.insert(project);
         return project;
+    }
+
+    update(data) {
+        if (data.AppKey) {
+            store.set('AppKey', data.AppKey);
+        }
+        if (data.AppToken) {
+            store.set('AppToken', data.AppToken);
+        }
+        return super.update(data);
     }
 };
 

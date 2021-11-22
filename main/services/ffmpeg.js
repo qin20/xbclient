@@ -6,6 +6,9 @@ const {exec, execGetOutput} = require('../utils/exec');
 const {formatTime, timeToNumber, numberToTime} = require('../utils/time');
 const audioSrv = require('./audio');
 const {app} = require('electron');
+const binPath = app.isPackaged ?
+    path.join(app.getAppPath(), 'bin').replace('app.asar', 'app.asar.unpacked') :
+    path.join(app.getAppPath(), 'bin');
 
 /**
  * 执行ffmpeg命令
@@ -16,7 +19,7 @@ const {app} = require('electron');
  */
 async function ffmpeg(args, desc, options) {
     return exec(
-        `${path.join(__dirname, '../../bin/ffmpeg.exe')} -y -hide_banner ${args}`,
+        `${binPath}/ffmpeg -y -hide_banner ${args}`,
         desc,
         options,
     );
@@ -24,7 +27,7 @@ async function ffmpeg(args, desc, options) {
 
 async function ffmpegGetOutput(args, desc, callback) {
     return execGetOutput(
-        `${path.join(__dirname, '../../bin/ffmpeg.exe')} -y -hide_banner ${args}`,
+        `${binPath}/ffmpeg -y -hide_banner ${args}`,
         desc,
         callback,
     );
@@ -37,7 +40,7 @@ async function ffmpegGetOutput(args, desc, callback) {
  * @return {Promise}
  */
 async function ffprobe(args, desc) {
-    return execGetOutput(`${path.join(__dirname, '../../bin/ffprobe.exe')} ${args}`, desc);
+    return execGetOutput(`${binPath}/ffprobe ${args}`, desc);
 }
 
 async function decode(project, callback) {

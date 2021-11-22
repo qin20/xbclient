@@ -15,8 +15,8 @@
 }
 
 .bee-panel-header {
-    height: 36px;
-    line-height: 36px;
+    height: 32px;
+    line-height: 32px;
     background-color: var(--bee-bg-84);
     border-bottom: 1px solid var(--bee-bg-100);
     padding: 0 16px;
@@ -39,4 +39,6 @@
     min-height: 50px;
     padding: 16px;
     flex: auto;
+    overflow: auto;
+    overflow-x: hidden;
 }

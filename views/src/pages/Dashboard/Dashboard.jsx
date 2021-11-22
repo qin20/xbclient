@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Layout, Popconfirm, Space, Typography, Divider } from '../../components';
+import { Layout, Popconfirm, Space, Typography, Divider, TitleBar } from '../../components';
 import { PlusCircleFilled, DeleteOutlined } from '@ant-design/icons';
 import namespace from '../../utils/namespace';
 import invoke from "../../utils/invoke";
@@ -79,6 +79,7 @@ export default class Dashboard extends React.Component {
     render() {
         return (
             <Layout.Content className={cls()}>
+                <TitleBar className={cls('titlebar')} maximizable={false}></TitleBar>
                 <div className={cls('start')} onClick={this.start}>
                     <PlusCircleFilled /> 开始创作
                 </div>

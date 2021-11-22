@@ -18,3 +18,4 @@ export {default as Radio} from './Radio';
 export {default as Slider} from './Slider';
 export {default as Spin} from './Spin';
 export {default as Tabs} from './Tabs';
+export {default as TitleBar} from './TitleBar';

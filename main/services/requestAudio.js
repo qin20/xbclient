@@ -1,9 +1,18 @@
 const qs = require('querystring');
 const request = require('request');
 const debug = require('debug')('requestAudio');
-const config = require('../config');
+const store = require('../utils/store');
 
-const keyMap = config.AUDIO_APP_KEY_LIST.reduce((ret, key) => {
+// 阿里云语音合成服务器
+const AUDIO_API = 'https://nls-gateway.cn-shanghai.aliyuncs.com/stream/v1/tts';
+// 阿里云语音合成app_key
+const AUDIO_APP_KEY_LIST = [
+    store.get('AppKey'),
+];
+// 阿里云语音合成token
+const AUDIO_TOKEN = store.get('AppToken');
+
+const keyMap = AUDIO_APP_KEY_LIST.reduce((ret, key) => {
     ret[key] = [];
     return ret;
 }, {});
@@ -30,8 +39,8 @@ async function startQueue() {
 }
 
 function addRequestTask(task) {
-    for (let i = 0; i < config.AUDIO_APP_KEY_LIST.length; i++) {
-        const key = config.AUDIO_APP_KEY_LIST[i];
+    for (let i = 0; i < AUDIO_APP_KEY_LIST.length; i++) {
+        const key = AUDIO_APP_KEY_LIST[i];
         if (keyMap[key].length < max) {
             const req = doRequest(task, key).finally(() => {
                 keyMap[key].splice(index - 1, 1);
@@ -47,9 +56,9 @@ function addRequestTask(task) {
 function doRequest(task, key) {
     return new Promise((resolve, reject) => {
         const params = task.params;
-        const url = `${config.AUDIO_API}?${qs.stringify({
+        const url = `${AUDIO_API}?${qs.stringify({
             appkey: key,
-            token: config.AUDIO_TOKEN,
+            token: AUDIO_TOKEN,
             format: 'wav',
             sample_rate: 44100,
             ...params,

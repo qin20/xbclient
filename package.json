@@ -23,23 +23,33 @@
   "description": "剪辑 中视频 电影解说",
   "dependencies": {
     "debug": "^4.3.2",
+    "electron-log": "^4.4.1",
     "electron-store": "^8.0.1",
+    "electron-updater": "^4.6.1",
     "moment": "^2.29.1",
     "request": "^2.88.2"
   },
   "build": {
     "productName": "小白剪辑",
     "appId": "com.xiaobai.app",
+    "asar": true,
+    "asarUnpack": "**\\*.{exe,dll}",
     "files": [
       "bin",
       "main",
       "node_modules",
       "views/build"
     ],
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDestopShortCut": true,
+      "runAfterFinish": true,
+      "installerIcon": "build/installerIcon.ico"
+    },
     "win": {
       "target": [
-        "nsis",
-        "zip"
+        "nsis"
       ]
     }
   }

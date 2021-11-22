@@ -30,7 +30,7 @@
     "react-router-dom": "^5.3.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "cross-env PORT=32221 react-scripts start",
     "build": "cross-env PUBLIC_URL='./' react-scripts build"
   },
   "eslintConfig": {

@@ -72,3 +72,30 @@
         margin-right: 10px;
     }
 }
+
+.bee-layout-sider--bottom {
+    margin-top: 100px;
+}
+
+.bee-layout-sider--btn {
+    padding: 10px 16px;
+    background: var(--bee-bg-88);
+    color: var(--bee-bg-20);
+    border-radius: 20px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    transition: all .3s;
+    cursor: pointer;
+    margin-top: 10px;
+
+    &:hover {
+        background: var(--bee-bg-84);
+        color: var(--bee-bg-16);
+    }
+
+    > .anticon {
+        font-size: 14px;
+        margin-right: 8px;
+    }
+}

@@ -379,6 +379,7 @@ class Editor extends React.Component {
                             <Panel.Header>设置</Panel.Header>
                             <Panel.Content className={cls('project-info')}>
                                 <div><span>作品名称：</span><span>{this.state.project.name}</span></div>
+                                <div><span>影片路径</span><span>{this.state.project._source}</span></div>
                                 <div><span>保存位置：</span><span>{this.state.project.output}</span></div>
                                 <div><span>背景音乐：</span><span>{this.state.project.bgMusic}</span></div>
                                 <div>
@@ -393,21 +394,23 @@ class Editor extends React.Component {
                                         <span>（{this.state.project.voice.desc}）</span>
                                     </span>
                                 </div>
+                                <div><span>AppKey：</span><span>{this.state.project.AppKey}</span></div>
+                                <div><span>AppToken：</span><span>{this.state.project.AppToken}</span></div>
                             </Panel.Content>
                             <Panel.Footer style={{ textAlign: 'right' }}>
-                                <Link to={`/projects/edit/${this.state.project.id}`}>
-                                    <Space>
-                                        <Button type="" onClick={this.clipAll} loading={loadingCount} long>
-                                            应用
-                                            {
-                                                !!loadingCount && (
-                                                    <span>({this.state.clips.length - loadingCount}/{this.state.clips.length})</span>
-                                                )
-                                            }
-                                        </Button>
+                                <Space>
+                                    <Button type="" onClick={this.clipAll} loading={loadingCount} long>
+                                        应用
+                                        {
+                                            !!loadingCount && (
+                                                <span>({this.state.clips.length - loadingCount}/{this.state.clips.length})</span>
+                                            )
+                                        }
+                                    </Button>
+                                    <Link to={`/projects/edit/${this.state.project.id}`}>
                                         <Button long>修改</Button>
-                                    </Space>
-                                </Link>
+                                    </Link>
+                                </Space>
                             </Panel.Footer>
                         </Panel>
                     </div>
