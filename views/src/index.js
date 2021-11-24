@@ -5,13 +5,16 @@ import 'normalize.css';
 import 'antd/dist/antd.css';
 import './index.scss';
 import App from './App';
+import { StateProvider } from './store';
 // import reportWebVitals from './reportWebVitals';
 
-message.config({ duration: 3, top: 20 })
+message.config({ duration: 3, top: 20 });
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <StateProvider>
+      <App />
+    </StateProvider>
   </React.StrictMode>,
   document.getElementById('app')
 );

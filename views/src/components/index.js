@@ -10,6 +10,7 @@ export {default as Inner} from './Inner';
 export {default as Input} from './Input';
 export {default as Layout} from './Layout';
 export {default as Modal} from './Modal';
+export {default as ModalLogin} from './ModalLogin';
 export {default as Page} from './Page';
 export {default as Panel} from './Panel';
 export {default as Popconfirm} from './Popconfirm';

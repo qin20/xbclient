@@ -1,0 +1,44 @@
+.bee-modal-login {
+    margin: auto;
+    width: 400px;
+    padding: 30px;
+
+    .ant-input,
+    .bee-input {
+        font-size: 14px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+
+    .ant-row  {
+        margin-bottom: 12px;
+    }
+
+    .ant-input-prefix {
+        margin-right: 10px;
+    }
+}
+
+.bee-modal-login--header {
+    margin-bottom: 10px;
+}
+
+.bee-modal-login--title {
+    font-size: 14px;
+    color: var(--bee-bg-60);
+}
+
+.bee-modal-login--error {
+    color: var(--bee-primary-hover);
+    height: 30px;
+    font-size: 12px;
+}
+
+.bee-modal-login--btn-login {
+    display: block;
+    width: 100%;
+    margin-top: 30px;
+    padding: 6px;
+    height: auto;
+    font-size: 14px;
+}

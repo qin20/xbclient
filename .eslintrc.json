@@ -18,10 +18,11 @@
         }
     },
     "rules": {
-        "no-unused-vars": "error",
         "no-undef": "error",
         "indent": ["error", 4],
         "require-jsdoc": "off",
-        "max-len": ["error", { "ignoreStrings": true, "ignoreTemplateLiterals": true }]
+        "max-len": ["error", { "ignoreStrings": true, "ignoreTemplateLiterals": true }],
+        "no-unused-vars": ["error", {"ignoreRestSiblings": true, "args": "none"}],
+        "valid-jsdoc": "off"
     }
 }

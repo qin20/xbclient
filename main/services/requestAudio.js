@@ -1,16 +1,16 @@
 const qs = require('querystring');
 const request = require('request');
 const debug = require('debug')('requestAudio');
-const store = require('../utils/store');
+const storage = require('../utils/storage');
 
 // 阿里云语音合成服务器
 const AUDIO_API = 'https://nls-gateway.cn-shanghai.aliyuncs.com/stream/v1/tts';
 // 阿里云语音合成app_key
 const AUDIO_APP_KEY_LIST = [
-    store.get('AppKey'),
+    storage.get('AppKey'),
 ];
 // 阿里云语音合成token
-const AUDIO_TOKEN = store.get('AppToken');
+const AUDIO_TOKEN = storage.get('AppToken');
 
 const keyMap = AUDIO_APP_KEY_LIST.reduce((ret, key) => {
     ret[key] = [];

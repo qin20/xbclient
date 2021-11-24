@@ -1,7 +1,31 @@
+.ant-input-affix-wrapper {
+    --bee-input-bg: var(--bee-bg-88);
+
+    &,
+    &:not(.ant-input-affix-wrapper-disabled):hover,
+    &:focus, &.ant-input-affix-wrapper-focused,
+    .ant-form-item-has-error &:not(.ant-input-affix-wrapper-disabled):not(.ant-input-affix-wrapper-borderless),
+    .ant-form-item-has-error &:not(.ant-input-affix-wrapper-disabled):not(.ant-input-affix-wrapper-borderless):hover {
+        background-color: var(--bee-input-bg);
+        border-color: var(--bee-input-bg);
+        color: var(--bee-bg-40);
+        caret-color: var(--bee-primary);
+        border-radius: 6px;
+        font-size: inherit;
+        font-weight: bold;
+        box-shadow: none;
+    }
+}
+
+.ant-form-item-has-error .ant-input-prefix {
+    color: var(--bee-bg-40);
+}
+
 .ant-input {
     --bee-input-bg: var(--bee-bg-88);
 
     &,
+    .ant-input-search &:hover, .ant-input-search &:focus,
     .ant-form-item-has-error &:not(.ant-input-disabled):not(.ant-input-borderless).ant-input,
     .ant-form-item-has-error &:not(.ant-input-disabled):not(.ant-input-borderless):hover
     {
@@ -10,7 +34,7 @@
         color: var(--bee-bg-40);
         caret-color: var(--bee-primary);
         border-radius: 6px;
-        font-size: 12px;
+        font-size: inherit;
         font-weight: bold;
     }
 

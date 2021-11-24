@@ -2,7 +2,7 @@ const path = require('path');
 const BaseModel = require('./Base');
 const moment = require('moment');
 const {app} = require('electron');
-const store = require('../utils/store');
+const storage = require('../utils/storage');
 
 class Projects extends BaseModel {
     constructor() {
@@ -40,11 +40,11 @@ class Projects extends BaseModel {
     get(id) {
         if (id) {
             const project = super.get(id);
-            if (store.get('AppKey')) {
-                project.AppKey = store.get('AppKey');
+            if (storage.get('AppKey')) {
+                project.AppKey = storage.get('AppKey');
             }
-            if (store.get('AppToken')) {
-                project.AppToken = store.get('AppToken');
+            if (storage.get('AppToken')) {
+                project.AppToken = storage.get('AppToken');
             }
             return project;
         }
@@ -62,10 +62,10 @@ class Projects extends BaseModel {
 
     update(data) {
         if (data.AppKey) {
-            store.set('AppKey', data.AppKey);
+            storage.set('AppKey', data.AppKey);
         }
         if (data.AppToken) {
-            store.set('AppToken', data.AppToken);
+            storage.set('AppToken', data.AppToken);
         }
         return super.update(data);
     }

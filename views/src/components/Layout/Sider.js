@@ -3,25 +3,15 @@ import { Layout } from "antd";
 import { NavLink  } from "react-router-dom";
 import {
     ScissorOutlined, FolderOutlined, AppstoreOutlined,
-    UserOutlined, CommentOutlined,
+    UserOutlined, CommentOutlined
 } from '@ant-design/icons';
-import { Model, Form } from '../../components';
+import { ModalLogin } from "..";
+import { dispatch } from "../../store";
 import namespace from '../../utils/namespace';
 
 const cls = namespace('bee-layout-sider');
 
-export default class Content extends React.PureComponent {
-    constructor(props) {
-        super(props);
-        this.state = {
-            loginModelVisible: false,
-        };
-    }
-
-    showModelVisible() {
-
-    }
-
+export default class Sider extends React.PureComponent {
     render() {
         return (
             <Layout.Sider className={cls()}>
@@ -41,16 +31,14 @@ export default class Content extends React.PureComponent {
                     </NavLink>
                 </div>
                 <div className={cls('bottom')}>
-                    <div className={cls('btn')}>
+                    <div className={cls('btn')} onClick={() => dispatch({ type: 'SHOW_LOGIN_MODEL' })}>
                         <UserOutlined /> 未登录
                     </div>
                     <div className={cls('btn')}>
                         <CommentOutlined /> 问题反馈
                     </div>
                 </div>
-                <Model.Simple>
-                    <Form></Form>
-                </Model.Simple>
+                <ModalLogin />
             </Layout.Sider>
         );
     }
