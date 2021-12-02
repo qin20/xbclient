@@ -8,10 +8,10 @@ const isDev = process.env.NODE_ENV === 'development';
 function createWindow() {
     const win = new BrowserWindow({
         show: false,
-        frame: true,
-        useContentSize: true,
-        resizable: true,
-        maximizable: true,
+        // frame: true,
+        // useContentSize: true,
+        // resizable: true,
+        // maximizable: true,
         // transparent: true,
         webPreferences: {
             devTools: isDev,

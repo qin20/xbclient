@@ -1,6 +1,7 @@
 const audioSrv = require('../services/audio');
-const {dataSuccess} = require('../utils/datajson');
+const {dataSuccess, dataError} = require('../utils/datajson');
 const handle = require('./handle');
+const debug = require('debug')('ipcMain');
 
 handle('get:/try-audio', async (e, params) => {
     try {

@@ -11,9 +11,8 @@
         color: var(--bee-bg-40);
         caret-color: var(--bee-primary);
         border-radius: 6px;
-        font-size: inherit;
+        font-size: 12px;
         font-weight: bold;
-        box-shadow: none;
     }
 }
 
@@ -25,16 +24,16 @@
     --bee-input-bg: var(--bee-bg-88);
 
     &,
-    .ant-input-search &:hover, .ant-input-search &:focus,
+    .ant-input-search &:hover, .ant-input-search &,
     .ant-form-item-has-error &:not(.ant-input-disabled):not(.ant-input-borderless).ant-input,
     .ant-form-item-has-error &:not(.ant-input-disabled):not(.ant-input-borderless):hover
     {
         background-color: var(--bee-input-bg);
         border-color: var(--bee-input-bg);
-        color: var(--bee-bg-40);
+        color: var(--bee-bg-60);
         caret-color: var(--bee-primary);
         border-radius: 6px;
-        font-size: inherit;
+        font-size: 12px;
         font-weight: bold;
     }
 
@@ -54,10 +53,13 @@
     }
 
     &:focus,
+    .ant-input-search &:focus,
     &.ant-input-focused {
         border-color: var(--bee-bg-84);
         border-right-width: 1px !important;
         outline: 0;
-        box-shadow: 0 0 0 2px var(--bee-bg-94);
+        color: var(--bee-bg-40);
+        // background-color: var(--bee-bg-80);
+        box-shadow: 0 0 4px var(--bee-bg-90);
     }
 }

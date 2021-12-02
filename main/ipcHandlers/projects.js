@@ -5,61 +5,69 @@ const {dataSuccess, dataError} = require('../utils/datajson');
 const {timeToNumber, numberToTime} = require('../utils/time');
 const handle = require('./handle');
 
+/**
+ * 获取项目
+ */
 handle('get:/projects', (e, id) => {
-    const data = projectsModel.get(id);
-    return dataSuccess(data);
+    let item;
+    if (id) {
+        item = projectsModel.getById(id);
+    } else {
+        item = projectsModel.getAll();
+    }
+    return dataSuccess(item);
 });
 
-handle('post:/projects', (e) => {
-    const project = projectsModel.add();
-    return dataSuccess(project);
+/**
+ * 新建项目
+ */
+handle('post:/projects', async (e, params) => {
+    const item = projectsModel.insert(params);
+    const poster = `${item.path}/poster.png`;
+    await ffmpegSrv.getPoster(params.source, poster);
+    const newItem = projectsModel.update({id: item.id, poster});
+    return dataSuccess(newItem);
 });
 
-handle('put:/projects', async (e, data) => {
-    const oldProject = projectsModel.get(data.id);
-    if (
-        oldProject.name !== data.name ||
-        oldProject.output !== data.output
-    ) {
-        data.clipDir = `${data.output}/${data.name}/clips`;
-        if (!fs.existsSync(data.clipDir)) {
-            fs.mkdirSync(data.clipDir, {recursive: true});
-        }
-    }
-    if (data._source && data._source !== oldProject._source) {
-        const dir = `${data.output}/${data.name}`;
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir, {recursive: true});
-        }
-        data.poster = `${dir}/poster.jpeg`;
-        data.source = '';
-        data.decodeProgress = 0;
-        await ffmpegSrv.getPoster(
-            data._source,
-            data.poster,
-        );
-    }
-    if (data.clips && data.clips.length) {
-        const duration = data.clips.reduce((ret, clip) => {
+/**
+ * 修改项目
+ */
+handle('put:/projects', (e, params) => {
+    // 计算影片总时长duration
+    if (params.clips && params.clips.length) {
+        const duration = params.clips.reduce((ret, clip) => {
             ret += (timeToNumber(clip.end) - timeToNumber(clip.start)) || 0;
             return ret;
         }, 0);
-        data.duration = numberToTime(duration, 'HH:mm:ss');
+        params.duration = numberToTime(duration, 'HH:mm:ss');
     }
-    const project = await projectsModel.update(data);
-    return dataSuccess(project);
+    const item = projectsModel.update(params);
+    return dataSuccess(item);
 });
 
-handle('delete:/projects', (e, project) => {
-    const [ret, error] = projectsModel.delete(project);
-    return ret ? dataSuccess() : dataError(error || '删除失败');
+/**
+ * 删除项目
+ */
+handle('delete:/projects', (e, params) => {
+    const item = projectsModel.delete(params);
+    // 删除项目的相关文件
+    if (fs.existsSync(item.path)) {
+        fs.rmSync(item.path, {force: true, recursive: true});
+    }
+    return dataSuccess(item);
 });
 
-handle('post:/projects/clip', async (e, data) => {
-    const clip = await ffmpegSrv.clip(data.project, data.clip);
+/**
+ * 剪辑电影片段
+ */
+handle('post:/projects/clip', async (e, params) => {
+    const clip = await ffmpegSrv.clip(params.project, params.clip);
     return dataSuccess(clip);
 });
 
+/**
+ * 视频转码关键帧
+ */
 handle.handling('get:/projects/decode', async (reply, end, project) => {
     await ffmpegSrv.decode(project, (resp) => {
         const newProject = projectsModel.update({...project, ...resp});
@@ -70,20 +78,26 @@ handle.handling('get:/projects/decode', async (reply, end, project) => {
     });
 });
 
-handle('get:/projects/preview', async (e, data) => {
-    const project = projectsModel.get(data.id);
-    if (!project) {
+/**
+ * 合成预览
+ */
+handle('get:/projects/preview', async (e, params) => {
+    const item = projectsModel.get(params.id);
+    if (!item) {
         return dataError('项目不存在');
     }
-    const src = await ffmpegSrv.mergeClips(project);
+    const src = await ffmpegSrv.mergeClips(item);
     return dataSuccess(src);
 });
 
-handle('get:/projects/export', async (e, data) => {
-    const project = projectsModel.get(data.project.id);
-    if (!project) {
+/**
+ * 根据参数合成并导出项目
+ */
+handle('get:/projects/export', async (e, params) => {
+    const item = projectsModel.get(params.project.id);
+    if (!item) {
         return dataError('项目不存在');
     }
-    const src = await ffmpegSrv.exportVedio(project, data.ratio);
+    const src = await ffmpegSrv.exportVedio(item, params.ratio);
     return dataSuccess(src);
 });

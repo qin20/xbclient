@@ -1,56 +1,72 @@
+/**
+ * 基于electron-store实现的model，类似于mysql的table
+ */
+
 const storage = require('../utils/storage');
 const moment = require('moment');
+const {uuid} = require('uuidv4');
 
 module.exports = class BaseModel {
     constructor() {}
 
-    generateId() {
-        return Date.now() - new Date(1970, 1, 1).getTime();
+    getDefault(data) {
+        return data || {};
     }
 
-    get(id) {
+    getTimestamp() {
+        return moment().format('YYYY-MM-DD hh:mm:ss');
+    }
+
+    generateId() {
+        return uuid();
+    }
+
+    getAll() {
         const collection = storage.get(this.name);
-        if (id) {
-            return collection[id];
-        }
-        return collection ? Object.values(collection) : [];
+        return collection ? Object.values(collection) : null;
+    }
+
+    getById(id) {
+        const collection = storage.get(this.name);
+        return collection[id] || null;
     }
 
     insert(data) {
+        const item = this.getDefault(data);
         const collection = storage.get(this.name) || {};
-        const id = this.generateId();
-        const now = moment().format('YYYY-MM-DD hh:mm:ss');
-        data.id = id;
-        data.createTime = now;
-        data.updateTime = now;
-        collection[id] = data;
+        const now = this.getTimestamp();
+        item.id = item.id || this.generateId();
+        item.createTime = now;
+        item.updateTime = now;
+        collection[item.id] = item;
         storage.set(this.name, collection);
+        return collection[item.id];
     }
 
     update(data) {
         const id = data.id;
         const collection = storage.get(this.name);
         if (!collection[id]) {
-            return data;
+            throw Error('更新失败，项目不存在');
         }
-        const project = {
+        collection[id] = {
             ...collection[id],
             ...data,
-            updateTime: moment().format('YYYY-MM-DD HH:mm:ss'),
+            updateTime: this.getTimestamp(),
         };
-        collection[id] = project;
         storage.set(this.name, collection);
-        return project;
+        return collection[id];
     }
 
     delete(data) {
         const id = typeof data === 'string' ? data : data.id;
         const collection = storage.get(this.name);
-        if (collection[id]) {
-            delete collection[id];
-            storage.set(this.name, collection);
-            return [true, ''];
+        const item = collection[id];
+        if (!item) {
+            throw Error('删除失败，项目不存在');
         }
-        return [false, '项目不存在'];
+        delete collection[id];
+        storage.set(this.name, collection);
+        return item;
     }
 };

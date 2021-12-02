@@ -3,14 +3,14 @@ const path = require('path');
 const config = require('../config');
 const {timeToNumber, numberToTime} = require('../utils/time');
 const debug = require('debug')('service:project');
-const store = require('../utils/store');
+const storage = require('../utils/storage');
 
 /**
  * 获取所有项目列表
  */
 
 function getProjects() {
-    return store.get('projects', []).sort((a, b) => (b.updateTime || 0) - (a.updateTime || 0));
+    return storage.get('projects', []).sort((a, b) => (b.updateTime || 0) - (a.updateTime || 0));
     // const dirs = fs.readdirSync(config.PROJECTS_DIR, {withFileTypes: true})
     //     .filter((dirent) => dirent.isDirectory());
     // return dirs.map((dirent) => ({

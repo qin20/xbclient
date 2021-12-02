@@ -10,7 +10,6 @@ import {
 import {
     Button, message, Spin,
     Panel, Layout, Space, Modal,
-
 } from '../../components';
 import Clip from './Clip';
 import namespace from '../../utils/namespace';
@@ -45,9 +44,9 @@ class Editor extends React.Component {
     }
 
     async componentDidMount() {
-        const project = await invoke('get:/projects', this.props.match.params.id);
-        const clips = project.clips && project.clips.length ? project.clips : [this.getNewClip()];
-        this.setState({ project, clips });
+        const {data} = await invoke('get:/projects', this.props.match.params.id);
+        const clips = data.clips && data.clips.length ? data.clips : [this.getNewClip()];
+        this.setState({ project: data, clips });
     }
 
     setXiguaRatio = () => {
@@ -379,11 +378,9 @@ class Editor extends React.Component {
                             <Panel.Header>设置</Panel.Header>
                             <Panel.Content className={cls('project-info')}>
                                 <div><span>作品名称：</span><span>{this.state.project.name}</span></div>
-                                <div><span>影片路径</span><span>{this.state.project._source}</span></div>
-                                <div><span>保存位置：</span><span>{this.state.project.output}</span></div>
-                                <div><span>背景音乐：</span><span>{this.state.project.bgMusic}</span></div>
+                                <div><span>影片路径：</span><span>{this.state.project.source}</span></div>
                                 <div>
-                                    <span>自动配音：</span>
+                                    <span>解说配音：</span>
                                     <span>
                                         {
                                             this.state.project.voice.sex === '男'
@@ -394,8 +391,7 @@ class Editor extends React.Component {
                                         <span>（{this.state.project.voice.desc}）</span>
                                     </span>
                                 </div>
-                                <div><span>AppKey：</span><span>{this.state.project.AppKey}</span></div>
-                                <div><span>AppToken：</span><span>{this.state.project.AppToken}</span></div>
+                                <div><span>创建时间：</span><span>{this.state.project.createTime}</span></div>
                             </Panel.Content>
                             <Panel.Footer style={{ textAlign: 'right' }}>
                                 <Space>
@@ -421,8 +417,8 @@ class Editor extends React.Component {
                                 <div>总时长: {this.state.project.duration}</div>
                             </div>
                             <Space>
-                                <Button className={cls('preview-button')} onClick={this.previewVedio} long>
-                                    <PlaySquareOutlined />
+                                <Button onClick={this.previewVedio} long>
+                                    <PlaySquareOutlined /> 预览
                                 </Button>
                             </Space>
                         </Panel.Header>

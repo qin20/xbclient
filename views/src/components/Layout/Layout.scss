@@ -14,7 +14,7 @@
 
 .bee-layout-content {
     background-color: var(--bee-bg-100);
-    padding: 24px;
+    padding: 8px;
 }
 
 .bee-layout-sider {
@@ -73,8 +73,9 @@
     }
 }
 
-.bee-layout-sider--bottom {
-    margin-top: 100px;
+.bee-layout-sider--feeback {
+    position: absolute;
+    bottom: 30px;
 }
 
 .bee-layout-sider--btn {
@@ -97,5 +98,52 @@
     > .anticon {
         font-size: 14px;
         margin-right: 8px;
+    }
+}
+
+.bee-layout-sider--userinfo {
+    color: var(--bee-bg-40);
+
+    > div {
+        margin: 4px 0;
+    }
+}
+
+.bee-layout-sider--actions {
+    > .bee-btn {
+        width: 54px;
+        font-size: 10px;
+    }
+}
+
+.bee-layout-sider--logout {
+    margin-left: 10px;
+}
+
+.bee-layout-sider--addpoints {
+    position: absolute;
+    left: 0;
+    right: 0;
+    text-align: center;
+    opacity: 0;
+    top: -5px;
+    font-size: 12px;
+    animation: pointup 1s linear;
+}
+
+@keyframes pointup {
+    0% {
+        opacity: 0;
+        top: 0;
+    }
+
+    70% {
+        opacity: 1;
+        top: -15px;
+    }
+
+    100% {
+        opacity: 0;
+        top: -20px;
     }
 }

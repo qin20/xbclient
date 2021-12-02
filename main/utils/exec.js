@@ -22,15 +22,15 @@ function exec(command, description, options={}) {
         });
 
         cp.on('error', (error) => {
-            debug(`[${description}]失败 : ${util.inspect(error.stack)}`);
-            reject(error);
+            debug(`[${description}]失败: ${util.inspect(error.stack)}`);
+            reject(new Error(`${description}失败`));
         });
 
         cp.on('exit', (exitCode) => {
             if (exitCode) {
-                const error = `[${description}]失败 : failed with exit code ${exitCode}`;
+                const error = `[${description}]失败: failed with exit code ${exitCode}`;
                 debug(error);
-                reject(error);
+                reject(new Error(`${description}失败`));
             } else {
                 debug(`[${description}]成功！`);
                 resolve();
@@ -64,14 +64,14 @@ function execGetOutput(command, description, callback) {
         cp.on('error', (e) => {
             const error = `[${description}]失败 : ${util.inspect(e.stack)}`;
             debug(error);
-            reject(error);
+            reject(new Error(`${description}失败`));
         });
 
         cp.on('exit', (exitCode) => {
             if (exitCode) {
                 const error = `[${description}]失败 : failed with exit code ${exitCode}`;
                 debug(error);
-                reject(error);
+                reject(new Error(`${description}失败`));
             } else {
                 debug(`[${description}]成功！`);
                 resolve(Buffer.concat(buffers).toString('utf-8').trim());

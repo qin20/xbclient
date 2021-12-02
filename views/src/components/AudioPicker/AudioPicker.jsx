@@ -129,7 +129,6 @@ export default class AudioPicker extends React.Component {
                         min={-500}
                         max={500}
                         defaultValue={this.params.speech_rate}
-                        tooltipVisible
                         onChange={this.onSpeedChange}
                     />
                 </Form.Item>
@@ -138,19 +137,17 @@ export default class AudioPicker extends React.Component {
                         min={-500}
                         max={500}
                         defaultValue={this.params.pitch_rate}
-                        tooltipVisible
                         onChange={this.onPitchChange}
                     />
                 </Form.Item>
                 <Form.Item label="音量" className={cls('inline-item')}>
                     <Slider
                         defaultValue={this.params.volume}
-                        tooltipVisible
                         onChange={this.onVolumeChange}
                     />
                 </Form.Item>
                 <div className="clearfix"></div>
-                <Form.Item label="配音人声">
+                <Form.Item label="配音">
                     <Radio.Group className={cls('radios')} defaultValue={this.params.voice} onChange={this.onRadioChange}>
                         <Tabs defaultActiveKey={this.getVoice(this.params.voice).type} type="card" size="small">
                             {

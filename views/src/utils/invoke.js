@@ -15,19 +15,22 @@ export default async function invoke(channel, data) {
   let resp;
   try {
     const start = Date.now();
-    console.info(`[ipc-"${channel}"] start`, [data]);
+    console.group(`[ipc-"${channel}"]`);
+    console.info(`参数：`, data);
     resp = await ipcRenderer.invoke.call(ipcRenderer, channel, data);
     if (resp.code !== 0) {
       throw resp;
     }
     const end = Date.now();
-    console.info(`[ipc-"${channel}"] done`, `(+${end - start}ms)`, resp);
+    console.info(`结果：`, `(+${end - start}ms)`, resp);
+    return resp;
   } catch (e) {
-    console.error(`[ipc] ${channel} fail: `, e);
-    message.error(e.message || e.error || '未知错误');
+    console.error(`结果：`, e);
+    message.error(resp.error);
     throw e;
+  } finally {
+    console.groupEnd();
   }
-  return resp.data;
 }
 
 invoke.invoking = (channel, data, callback) => {

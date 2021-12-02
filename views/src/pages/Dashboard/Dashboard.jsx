@@ -28,8 +28,8 @@ export default class Dashboard extends React.Component {
 
 
     start = async () => {
-        const project = await invoke('post:/projects');
-        this.props.history.push(`/projects/edit/${project.id}`);
+        // const { data } = await invoke('post:/projects');
+        this.props.history.push(`/projects/add`);
     }
 
     syncProjectIntra(project) {
@@ -72,8 +72,8 @@ export default class Dashboard extends React.Component {
     }
 
     async componentDidMount() {
-        const projects = await invoke('get:/projects');
-        this.setState({ projects: projects });
+        const { data } = await invoke('get:/projects');
+        this.setState({ projects: data });
     }
 
     render() {
@@ -91,7 +91,13 @@ export default class Dashboard extends React.Component {
                             return (
                                 <div className={cls('project')} key={p.id}>
                                     <div className={cls('project-poster-container')}>
-                                        {
+                                        <Link to={`/projects/${p.id}`}>
+                                            <div
+                                                className={cls('project-poster')}
+                                                style={{ backgroundImage: `url(${poster})`}}
+                                            />
+                                        </Link>
+                                        {/* {
                                             p.source && +p.decodeProgress === 100 ? (
                                                 <Link to={`/projects/${p.id}`}>
                                                     <div
@@ -114,7 +120,7 @@ export default class Dashboard extends React.Component {
                                                     />
                                                 </>
                                             )
-                                        }
+                                        } */}
                                         <Popconfirm
                                             title="删除后不可恢复！"
                                             onConfirm={() => this.deleteProject(p, i)}
@@ -125,7 +131,8 @@ export default class Dashboard extends React.Component {
                                         </Popconfirm>
                                     </div>
                                     <p className={cls('project-name')}>{p.name}</p>
-                                    {
+                                    <p className={cls('project-meta')}>{`${p.clips.length}片段`} | {`${p.duration}`}</p>
+                                    {/* {
                                         p.source && +p.decodeProgress === 100 ? (
                                             <p className={cls('project-meta')}>{`${p.clips.length}片段`} | {`${p.duration}`}</p>
                                         ) : (
@@ -134,7 +141,7 @@ export default class Dashboard extends React.Component {
                                                 { p._source ? <Typography.Link onClick={() => this.onDecode(p)}>解码</Typography.Link> : null}
                                             </Space>
                                         )
-                                    }
+                                    } */}
                                 </div>
                             );
                         })

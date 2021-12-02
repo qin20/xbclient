@@ -7,7 +7,7 @@ const cls = namespace('bee-btn');
 
 export default class Content extends React.PureComponent {
     render() {
-        const {className = '', main, long, ...restProps} = this.props;
+        const {className = '', main, round, long, ...restProps} = this.props;
 
         return (
             <Button
@@ -15,6 +15,7 @@ export default class Content extends React.PureComponent {
                 className={classnames(cls(), className, {
                     [cls('main')]: main,
                     [cls('long')]: long,
+                    [cls('round')]: round,
                 })}
                 {...restProps}
             />

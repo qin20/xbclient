@@ -66,11 +66,11 @@ class ModalLogin extends React.Component {
         this.setState({ loginLoading: true, error: '' });
 
         try {
-            const data = await axios.post('/phone_login', {
+            const { data } = await axios.post('/phone_login', {
                 phone: `+86${phone}`,
                 code: code,
             });
-            dispatch({ type: 'LOGIN', ...data });
+            dispatch({ type: 'LOGIN', data });
         } catch(e) {
             this.setState({ error: e.message || '登陆失败' });
             this.form.current.setFieldsValue({ code: '' });

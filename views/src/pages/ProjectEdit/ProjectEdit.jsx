@@ -15,8 +15,8 @@ export default class ProjectEdit extends React.Component {
     }
 
     async componentDidMount() {
-        const project = await invoke('get:/projects', this.props.match.params.id);
-        this.setState({ project });
+        const {data} = await invoke('get:/projects', this.props.match.params.id);
+        this.setState({ project: data });
     }
 
     submiting = async () => {

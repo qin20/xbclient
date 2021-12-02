@@ -351,8 +351,11 @@ async function mergeClips(project) {
 }
 
 async function getPoster(src, output) {
+    if (!fs.existsSync(output)) {
+        fs.mkdirSync(path.dirname(output), {recursive: true});
+    }
     await ffmpeg(
-        `-y -ss 0 -i "${src}" -vframes 1 "${output}"`,
+        `-y -ss 00:01:00.000 -i "${src}" -vframes 1 "${output}"`,
         '生成视频封面',
     );
 }

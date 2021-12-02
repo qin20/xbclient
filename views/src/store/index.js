@@ -1,8 +1,21 @@
 import React, { createContext, useReducer, useContext } from "react";
+import { endcode, decode } from "../utils/encode";
+import axios from '../axios';
+
+const STORE_KEY = 'storage';
+let storage = null;
+try {
+    const strs = localStorage.getItem(STORE_KEY);
+    if (strs) {
+        storage = decode(strs);
+        axios.defaults.headers.common['Authorization'] = `Bearer ${storage.user.token}`;
+    }
+} catch (e) {}
+
+console.log(storage);
 
 const initialState = {
-    token: localStorage.getItem('token'),
-    user: localStorage.getItem('user'),
+    ...storage,
     loginModelVisible: false,
 };
 
@@ -10,23 +23,40 @@ const store = createContext(initialState);
 
 const { Provider } = store;
 
-function reducer(state, action) {
+function reducer(preState, action) {
+    let nextState = {};
     switch(action.type) {
         case 'SHOW_LOGIN_MODEL':
-            return { ...state, loginModelVisible: true };
+            nextState = { ...preState, loginModelVisible: true };
+            break;
         case 'HIDE_LOGIN_MODEL':
-            return { ...state, loginModelVisible: false };
+            nextState = { ...preState, loginModelVisible: false };
+            break;
+        case 'TODAY':
+            nextState = { ...preState, user: { ...preState.user, pointsFree: action.data.pointsFree, today: true } };
+            break;
         case 'LOGIN':
-            localStorage.setItem('token', action.token);
-            localStorage.setItem('user', action.user);
-            return { ...state, loginModelVisible: false, token: action.token, user: action.user };
+            const user = action.data;
+            axios.defaults.headers.common['Authorization'] = `Bearer ${user.token}`;
+            nextState = { ...preState, loginModelVisible: false, user };
+            break;
         case 'LOGOUT':
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            return { ...state, loginModelVisible: false, token: null, user: null };
+            axios.defaults.headers.common['Authorization'] = null;
+            localStorage.removeItem(STORE_KEY);
+            nextState = { ...preState, loginModelVisible: false, user: null };
+            break;
         default:
             throw new Error(`action.type: "${action.type}" not found`);
     }
+    if (process.env.NODE_ENV === 'development') {
+        console.group('store change');
+        console.log('prestate', preState);
+        console.log('action', action);
+        console.log('nextstate', nextState);
+        console.groupEnd();
+    }
+    localStorage.setItem(STORE_KEY, endcode(nextState));
+    return nextState;
 }
 
 let mydispatch;
@@ -45,6 +75,6 @@ export function dispatch(action) {
 export function connect(mapStateToProps, Component) {
     return function ConnectedComponent(props) {
         const state = useContext(store);
-        return <Component {...mapStateToProps && mapStateToProps(state)} {...props} />;
+        return <Component {...(mapStateToProps && mapStateToProps(state))} {...props} />;
     }
 }

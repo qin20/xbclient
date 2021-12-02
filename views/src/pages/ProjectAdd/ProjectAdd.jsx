@@ -1,6 +1,6 @@
 import React from 'react';
 import invoke from '../../utils/invoke';
-import {Panel, Layout, Button} from '../../components';
+import {Panel, Layout, Button, Space} from '../../components';
 import ProjectForm from '../../components/ProjectForm';
 
 export default class ProjectAdd extends React.Component {
@@ -13,16 +13,16 @@ export default class ProjectAdd extends React.Component {
         this.projForm = React.createRef();
     }
 
-    submiting = () => {
-        this.projForm.current.getValues().then(async (values) => {
-            this.setState({ submiting: true });
-            try {
-                await invoke('post:/projects', values);
-                this.props.history.goBack();
-            } catch(e) {
-                this.setState({ submiting: false });
-            }
-        });
+    goback = () => {
+        this.props.history.goBack();
+    }
+
+    submiting = async () => {
+        const values = await this.projForm.current.getValues();
+        try {
+            await invoke('post:/projects', values);
+            this.goback();
+        } catch (e) {}
     }
 
     render() {
@@ -31,15 +31,21 @@ export default class ProjectAdd extends React.Component {
                 <Panel>
                     <Panel.Header style={{ justifyContent: 'space-between' }}>
                         <span>新增</span>
-                        <Button
-                            htmlType="submit"
-                            loading={this.state.submiting}
-                            onClick={this.submiting}
-                            main
-                            style={{ float: 'right' }}
+                        <Space
+                            direction="horizontal"
+                            align="center"
+                            style={{ float: 'right', marginTop: -1 }}
                         >
-                            保存
-                        </Button>
+                            <Button
+                                htmlType="submit"
+                                onClick={this.goback}
+                            >取消</Button>
+                            <Button
+                                htmlType="submit"
+                                onClick={this.submiting}
+                                main
+                            >保存</Button>
+                        </Space>
                     </Panel.Header>
                     <Panel.Content>
                         <ProjectForm ref={this.projForm} />

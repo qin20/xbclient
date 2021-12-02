@@ -8,11 +8,6 @@ const cls = namespace('bee-project-form');
 export default class ProjectForm extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            submiting: false,
-            _source: this.props.initialValues._source,
-            bgMusic: this.props.initialValues.bgMusic,
-        }
         this.form = React.createRef();
     }
 
@@ -20,21 +15,19 @@ export default class ProjectForm extends React.Component {
         const values = await this.form.current.validateFields();
         return {
             ...values,
-            _source: this.state._source,
-            bgMusic: this.state.bgMusic,
         };
     }
 
     onSourceChange = (e) => {
         const file = e.target.files[0];
-        const _source = file ? file.path : null;
-        this.setState({ _source });
+        const source = file ? file.path : null;
+        this.form.current.setFieldsValue({ source });
     }
 
     onBgMusicChange = (e) => {
         const file = e.target.files[0];
         const bgMusic = file ? file.path : null;
-        this.setState({ bgMusic });
+        this.form.current.setFieldsValue({ bgMusic });
     }
 
     render() {
@@ -42,7 +35,6 @@ export default class ProjectForm extends React.Component {
             <Form
                 ref={this.form}
                 className={cls()}
-                name="basic"
                 initialValues={this.props.initialValues}
                 onFinish={this.onFinish}
                 autoComplete="off"
@@ -50,23 +42,27 @@ export default class ProjectForm extends React.Component {
                 <Form.Item label="项目名称" name="name">
                     <Input placeholder="请输入名称" disabled={this.props.disableFields.indexOf('name') >= 0} />
                 </Form.Item>
-                <Form.Item label="AppKey" name="AppKey">
+                {/* <Form.Item label="AppKey" name="AppKey">
                     <Input placeholder="AppKey" />
                 </Form.Item>
                 <Form.Item label="AppToken" name="AppToken">
                     <Input placeholder="请输入AppToken" />
-                </Form.Item>
-                <Form.Item label="影片路径" name="_source">
+                </Form.Item> */}
+                <Form.Item label="影片路径">
                     <FilePicker onChange={this.onSourceChange} />
-                    <Input placeholder="请选择影片" value={this.state._source} />
+                    <Form.Item name="source" style={{ margin: 0 }}>
+                        <Input placeholder="请选择影片" />
+                    </Form.Item>
                 </Form.Item>
-                <Form.Item label="保存路径" name="output">
+                {/* <Form.Item label="保存路径" name="output">
                     <Input placeholder="请输入保存路径" />
-                </Form.Item>
-                <Form.Item label="背景音乐" name="bgMusic">
+                </Form.Item> */}
+                {/* <Form.Item label="背景音乐">
                     <FilePicker onChange={this.onBgMusicChange} />
-                    <Input placeholder="请选择背景音乐" value={this.state.bgMusic} />
-                </Form.Item>
+                    <Form.Item name="bgMusic" style={{ margin: 0 }}>
+                        <Input placeholder="请选择背景音乐" />
+                    </Form.Item>
+                </Form.Item> */}
                 <Form.Item name="voice">
                     <AudioPicker />
                 </Form.Item>
@@ -76,6 +72,6 @@ export default class ProjectForm extends React.Component {
 }
 
 ProjectForm.defaultProps = {
-    initialValues: null,
+    initialValues: {},
     disableFields: [],
 };
