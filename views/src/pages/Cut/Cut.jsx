@@ -107,7 +107,7 @@ class Editor extends React.Component {
         this.setState(({ project }) => ({
             project: { ...project, source }
         }), () => {
-            this.saveProject();
+            this.save();
         });
     }
 
@@ -116,47 +116,47 @@ class Editor extends React.Component {
         return moment(time, 'HH:mm:ss.SSS').format('HH:mm:ss.SSS')
     }
 
-    onClip = (e, data) => {
+    onClip = (e, params) => {
         if (!this.state.project.source) {
             message.error('请先导入影片');
             return;
         }
         this.clip({
-            ...data,
+            ...params,
             source: this.state.project.source,
         });
     };
 
-    clip = async (data) => {
-        data.start = this.formatTime(data.start);
-        data.end = data.end && this.formatTime(data.end);
+    clip = async (params) => {
+        params.start = this.formatTime(params.start);
+        params.end = params.end && this.formatTime(params.end);
 
-        if (!data.end && !(data.srt && (data.autoSound === undefined ? true : +data.autoSound))) {
+        if (!params.end && !(params.srt && (params.autoSound === undefined ? true : +params.autoSound))) {
             message.error('结束时间和配音不能同时为空');
             return;
         }
 
-        this.updateClip(data.id, {
+        this.updateClip(params.id, {
             loading: true,
         }, false);
 
         try {
-            const clip = await invoke('post:/projects/clip', {
+            const {data} = await invoke('post:/projects/clip', {
                 clip: {
-                    ...data,
-                    srt: (data.srt || '').trim(),
+                    ...params,
+                    srt: (params.srt || '').trim(),
                 },
                 project: this.state.project,
             });
 
-            this.updateClip(data.id, {
-                ...clip,
+            this.updateClip(params.id, {
+                ...data,
                 loading: false,
-                poster: `${clip.poster.replace(/\\/g, '/')}?_=${Date.now()}`,
-                src: `${clip.src.replace(/\\/g, '/')}?_=${Date.now()}`
+                poster: `${data.poster.replace(/\\/g, '/')}?_=${Date.now()}`,
+                src: `${data.src.replace(/\\/g, '/')}?_=${Date.now()}`
             });
         } catch (e) {
-            this.updateClip(data.id, {
+            this.updateClip(params.id, {
                 loading: false,
             }, false);
         }
@@ -182,8 +182,13 @@ class Editor extends React.Component {
 
     deleteClip = (e, data, index) => {
         const doDelete = () => {
-            this.state.clips.splice(index, 1);
-            this.updateClips(this.state.clips);
+            const clips = [...this.state.clips];
+            clips.splice(index, 1);
+            this.updateClips(clips);
+            invoke('delete:/projects/clip', {
+                project: this.state.project,
+                clip: data,
+            });
         };
         if (data.src) {
             confirm('确定要删除片段吗？此操作不可恢复。').then(doDelete);
@@ -192,16 +197,25 @@ class Editor extends React.Component {
         }
     }
 
-    saveProject = () => {
+    save = () => {
         clearTimeout(this.saveTimeout);
-        this.setState({ saving: true });
         this.saveTimeout = setTimeout(async () => {
-            const project = await invoke('put:/projects', {
-                ...this.state.project,
-                clips: this.state.clips,
-            });
-            this.setState({ project, saving: false });
-        }, 300);
+            this._save();
+        }, 10000);
+    }
+
+    async saveRightNow() {
+        clearTimeout(this.saveTimeout);
+        await this._save();
+    }
+
+    async _save() {
+        this.setState({ saving: true });
+        const { data } = await invoke('put:/projects', {
+            ...this.state.project,
+            clips: this.state.clips,
+        });
+        this.setState({ project: data, saving: false });
     }
 
     onStartChange = (e, data) => {
@@ -251,14 +265,20 @@ class Editor extends React.Component {
     }
 
     updateClips(clips, save = true, callback) {
-        this.setState({ clips: [...clips] }, callback);
-        save && this.saveProject();
+        if (!clips || clips.length === 0) {
+            clips = [this.getNewClip()];
+        }
+        this.setState({ clips }, () => {
+            callback && callback();
+            save && this.save();
+        });
     }
 
     previewVedio = async () => {
         this.setState({ previewLoading: true, previewSrc: '', previewVisible: true });
-        const src = await invoke('get:/projects/preview', this.state.project);
-        this.setState({ previewLoading: false, previewSrc: src });
+        await this.saveRightNow();
+        const {data} = await invoke('get:/projects/preview', this.state.project);
+        this.setState({ previewLoading: false, previewSrc: data });
     }
 
     onPreviewClose = () => {

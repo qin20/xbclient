@@ -1,16 +1,17 @@
 import React, { createContext, useReducer, useContext } from "react";
-import { endcode, decode } from "../utils/encode";
+import moment from "moment";
 import axios from '../axios';
+import Storage from './Storage';
 
-const STORE_KEY = 'storage';
+const localStorage = new Storage(window.localStorage);
+
+const STORE_KEY = 'renderer-storage';
+
 let storage = null;
 try {
-    const strs = localStorage.getItem(STORE_KEY);
-    if (strs) {
-        storage = decode(strs);
-        axios.defaults.headers.common['Authorization'] = `Bearer ${storage.user.token}`;
-    }
-} catch (e) {}
+    storage = localStorage.getItem(STORE_KEY);
+    axios.defaults.headers.common['Authorization'] = `Bearer ${storage.user.token}`;
+} catch(e) {}
 
 console.log(storage);
 
@@ -33,12 +34,12 @@ function reducer(preState, action) {
             nextState = { ...preState, loginModelVisible: false };
             break;
         case 'TODAY':
-            nextState = { ...preState, user: { ...preState.user, pointsFree: action.data.pointsFree, today: true } };
+            nextState = { ...preState, user: { ...preState.user, pointsFree: action.data.pointsFree, today: moment().format('YYYYMMDD') } };
             break;
         case 'LOGIN':
             const user = action.data;
             axios.defaults.headers.common['Authorization'] = `Bearer ${user.token}`;
-            nextState = { ...preState, loginModelVisible: false, user };
+            nextState = { ...preState, loginModelVisible: false, user: {...user, today: user.today ? moment().format('YYYYMMDD') : false } };
             break;
         case 'LOGOUT':
             axios.defaults.headers.common['Authorization'] = null;
@@ -55,7 +56,7 @@ function reducer(preState, action) {
         console.log('nextstate', nextState);
         console.groupEnd();
     }
-    localStorage.setItem(STORE_KEY, endcode(nextState));
+    localStorage.setItem(STORE_KEY, nextState);
     return nextState;
 }
 

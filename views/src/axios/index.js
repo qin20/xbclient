@@ -16,7 +16,7 @@ instance.interceptors.response.use(function (response) {
         return Promise.reject(new Error(data.message));
     }
 
-    if (data.code === -2) {
+    if (data.code === -2 && response.request.responseURL.indexOf('logout') < 0) {
         dispatch({ type: 'SHOW_LOGIN_MODEL' });
         return Promise.reject(new Error(data.message));
     }

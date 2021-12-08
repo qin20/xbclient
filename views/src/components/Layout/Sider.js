@@ -10,6 +10,7 @@ import namespace from '../../utils/namespace';
 import { connect, dispatch } from "../../store";
 import { confirm } from "../../utils/modal";
 import axios from '../../axios';
+import moment from "moment";
 
 const cls = namespace('bee-layout-sider');
 
@@ -71,7 +72,7 @@ class Sider extends React.PureComponent {
                                     </div>
                                     <div className={cls('actions')}>
                                         {
-                                            this.props.user.today
+                                            this.props.user.today === moment().format('YYYYMMDD')
                                                 ? (
                                                     <Button className={cls('today')}>
                                                         <span>已签到</span>

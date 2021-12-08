@@ -280,6 +280,8 @@ textarea.bee-cut--clip-srt {
     .vjs-poster,
     .vjs-tech {
         border-radius: 6px 6px 0 0;
+        object-fit: contain;
+        background-size: contain;
     }
 }
 

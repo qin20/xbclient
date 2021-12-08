@@ -1,7 +1,7 @@
 const qs = require('querystring');
 const request = require('request');
 const debug = require('debug')('requestAudio');
-const storage = require('../utils/storage');
+const storage = require('../utils/store');
 
 // 阿里云语音合成服务器
 const AUDIO_API = 'https://nls-gateway.cn-shanghai.aliyuncs.com/stream/v1/tts';

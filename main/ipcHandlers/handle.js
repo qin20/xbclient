@@ -1,10 +1,9 @@
 const {ipcMain} = require('electron');
-const {ipcError} = require('../utils/datajson');
 const debug = require('debug')('ipcMain');
 
 function errorHandler(e) {
     debug(e);
-    return ipcError(e.message || e || '未知错误');
+    return {code: -1, msg: '未知错误', ...e};
 }
 
 function handle(channel, listener) {

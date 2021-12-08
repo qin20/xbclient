@@ -3,13 +3,14 @@ import {SoundOutlined, ManOutlined, WomanOutlined} from '@ant-design/icons';
 import {Slider, Form, Radio, Input, Tabs} from '..';
 import data from './data';
 import namespace from '../../utils/namespace';
+import { connect } from "../../store";
 
 import './AudioPicker.scss';
 import invoke from "../../utils/invoke";
 
 const cls = namespace('bee-audioPicker');
 
-export default class AudioPicker extends React.Component {
+class AudioPicker extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -24,6 +25,7 @@ export default class AudioPicker extends React.Component {
         }
         this.defaultText = "大家好 我是小白 今天为大家带来一部非常精彩的影片";
         this.params = {
+            api: 'ali',
             text: this.defaultText,
             voice: 'xiaoyun',
             speech_rate: 200,
@@ -39,14 +41,20 @@ export default class AudioPicker extends React.Component {
         this.fireChange();
     }
 
+    componentWillUnmount() {
+        this.audio.pause();
+        this.audio.src = null;
+        this.audio = null;
+    }
+
     onTryAudio = async () => {
         this.audio.pause();
         window.localStorage.setItem('audio_params', JSON.stringify(this.params));
         try {
             this.setState({ audioLoading: true });
-            const src = await invoke('get:/try-audio', this.params);
+            const {data} = await invoke('get:/try-audio', this.params);
             this.setState({ audioLoading: false });
-            this.audio.src = `${src}?t=${Date.now()}`;
+            this.audio.src = `${data}?t=${Date.now()}`;
             this.audio.play();
         } catch(e) {
             this.setState({ audioLoading: false });
@@ -186,3 +194,6 @@ export default class AudioPicker extends React.Component {
         );
     }
 }
+
+const mapStateToProps = ({ user }) => ({ user });
+export default connect(mapStateToProps, AudioPicker);

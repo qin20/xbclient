@@ -11,11 +11,9 @@ import { StateProvider } from './store';
 message.config({ duration: 3, top: 20 });
 
 ReactDOM.render(
-  <React.StrictMode>
-    <StateProvider>
-      <App />
-    </StateProvider>
-  </React.StrictMode>,
+  <StateProvider>
+    <App />
+  </StateProvider>,
   document.getElementById('app')
 );
 

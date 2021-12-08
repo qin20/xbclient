@@ -44,7 +44,7 @@ async function ffprobe(args, desc) {
 }
 
 async function decode(project, callback) {
-    const output = `${project.output}/${project.name}/decoded.mp4`;
+    const output = `${project.path}/decoded.mp4`;
     const duration = await getMediaDuration(project._source);
 
     await ffmpegGetOutput(
@@ -78,7 +78,7 @@ async function decode(project, callback) {
  * @param {*} duration
  */
 async function clipVideo(project, clip, duration) {
-    const output = `${project.clipDir}/${clip.id}/video_clip.mp4`;
+    const output = `${project.path}/${clip.id}/video_clip.mp4`;
     await ffmpeg(
         `-ss ${clip.start} -i "${clip.source}" -to ${duration} -intra -c copy ${output}`,
         '裁剪视频',
@@ -87,7 +87,7 @@ async function clipVideo(project, clip, duration) {
 }
 
 async function getVideoSound(project, clip, video, volume) {
-    const output = `${project.clipDir}/${clip.id}/originSound.mp3`;
+    const output = `${project.path}/${clip.id}/originSound.mp3`;
     await ffmpeg(
         `-i ${video} -vn -map a -filter:a "volume=${volume/100}" ${output}`,
         '提取视频原声',
@@ -102,12 +102,12 @@ async function getVideoSound(project, clip, video, volume) {
  * @return {array} [audioSrc, srtSrc]
  */
 async function generateClipTTS(project, clip) {
-    const clipDir = `${project.clipDir}/${clip.id}`;
+    const path = `${project.path}/${clip.id}`;
 
     debug(`开始合成语音 ...`);
-    const originSrc = `${clipDir}/audio_tts_origin.wav`;
-    const aSrc = `${clipDir}/audio_tts.wav`; // 音频输出路径
-    audioSrv.save(await audioSrv.requestAudio({
+    const originSrc = `${path}/audio_tts_origin.wav`;
+    const aSrc = `${path}/audio_tts.wav`; // 音频输出路径
+    audioSrv.save(await audioSrv.textToSpeech({
         ...project.voice,
         text: clip.srt,
     }), originSrc);
@@ -115,7 +115,7 @@ async function generateClipTTS(project, clip) {
         `-i ${originSrc} -af "afade=t=in:st=0:d=0.1" ${aSrc}`,
         `音频淡入处理`,
     );
-    const sSrc = `${clipDir}/subtitle.srt`; // 字幕输出路径
+    const sSrc = `${path}/subtitle.srt`; // 字幕输出路径
     await textToSrt(sSrc, clip.srt, await getMediaDuration(aSrc));
 
     return [aSrc, sSrc];
@@ -161,7 +161,7 @@ async function getMediaDuration(src) {
 }
 
 async function mergeSrt(project, clip, video, srt) {
-    const output = `${project.clipDir}/${clip.id}/video_srt.mp4`;
+    const output = `${project.path}/${clip.id}/video_srt.mp4`;
     const style = qs.stringify({
         Fontname: '宋体',
         Fontsize: 20,
@@ -208,7 +208,7 @@ async function mergeAudio(inputs, desc) {
 }
 
 async function mergeVideoAudio(project, clips, video, audio) {
-    const output = `${project.clipDir}/${clips.id}/video.mp4`;
+    const output = `${project.path}/${clips.id}/video.mp4`;
     const videoDuration = await getMediaDuration(video);
     const audioDuration = audio ? await getMediaDuration(audio) : 0;
     if (videoDuration !== audioDuration) {
@@ -271,7 +271,7 @@ async function clipWithAutoSound(project, clip) {
  * @param {*} clip
  */
 async function clipWithoutAutoSound(project, clip) {
-    const clipDir = `${project.clipDir}/${clip.id}`;
+    const path = `${project.path}/${clip.id}`;
     const startVal = timeToNumber(clip.start);
     const endVal = timeToNumber(clip.end);
     clip.end = numberToTime(endVal);
@@ -281,7 +281,7 @@ async function clipWithoutAutoSound(project, clip) {
     );
     // 嵌入字幕
     if (clip.srt) {
-        const sSrc = `${clipDir}/sutitles.srt`;
+        const sSrc = `${path}/sutitles.srt`;
         await textToSrt(sSrc, clip.srt, await getMediaDuration(video));
         video = await mergeSrt(project, clip, video, sSrc);
     }
@@ -297,8 +297,8 @@ async function clipWithoutAutoSound(project, clip) {
 }
 
 async function clip(project, clip) {
-    if (!fs.existsSync(`${project.clipDir}/${clip.id}`)) {
-        fs.mkdirSync(`${project.clipDir}/${clip.id}`, {recursive: true});
+    if (!fs.existsSync(`${project.path}/${clip.id}`)) {
+        fs.mkdirSync(`${project.path}/${clip.id}`, {recursive: true});
     }
 
     let src;
@@ -308,10 +308,10 @@ async function clip(project, clip) {
         src = await clipWithoutAutoSound(project, clip);
     }
 
-    const poster = `${project.clipDir}/${clip.id}/poster.jpeg`;
+    const poster = `${project.path}/${clip.id}/poster.jpeg`;
     await getPoster(src, poster);
 
-    clearDir(`${project.clipDir}/${clip.id}`, [src, poster]);
+    clearDir(`${project.path}/${clip.id}`, [src, poster]);
 
     return {
         ...clip,
@@ -331,8 +331,7 @@ async function clearDir(dir, excludes=[]) {
 }
 
 async function mergeClips(project) {
-    const projectDir = `${project.output}/${project.name}`;
-
+    const projectDir = project.path;
     const videoListSrc = `${projectDir}/video_clip_list.txt`;
     const videoList = [];
     project.clips.forEach(function(clip) {
@@ -355,7 +354,7 @@ async function getPoster(src, output) {
         fs.mkdirSync(path.dirname(output), {recursive: true});
     }
     await ffmpeg(
-        `-y -ss 00:01:00.000 -i "${src}" -vframes 1 "${output}"`,
+        `-y -ss 0 -i "${src}" -vframes 1 "${output}"`,
         '生成视频封面',
     );
 }
@@ -364,13 +363,13 @@ async function getBgMusic(project, video) {
     if (!project.bgMusic) {
         return null;
     }
-    const bgSrc1 = `${project.output}/${project.name}/背景音乐.wav`;
+    const bgSrc1 = `${project.path}/背景音乐.wav`;
     const duration = await getMediaDuration(video);
     await ffmpeg(
         `-i "${project.bgMusic}" ${bgSrc1}`,
         '提取背景音乐',
     );
-    const bgSrc2 = `${project.output}/${project.name}/背景音乐循环.wav`;
+    const bgSrc2 = `${project.path}/背景音乐循环.wav`;
     await ffmpeg(
         `-stream_loop -1 -i "${bgSrc1}" -af "volume=${(project.bgVolume || 100) / 100}" -t ${duration} ${bgSrc2}`,
         '调整背景音乐声音大小',
@@ -382,20 +381,20 @@ async function exportVedio(project, ratio) {
     const mergeSrc = await mergeClips(project);
     let video;
     if (ratio === '16/9') {
-        video = `${project.output}/${project.name}/${project.name}_16_9.mp4`;
+        video = `${project.path}/${project.name}_16_9.mp4`;
         await ffmpeg(
             `-i "${mergeSrc}" -vf "scale=1920:-1:pad=1920:1080:(ow-iw)/2:(oh-ih)/2,setsar=sar=1/1,setdar=dar=16/9" -c:a copy ${video}`,
             `视频转码`,
         );
     } else {
-        video = `${project.output}/${project.name}/${project.name}_9_16.mp4`;
+        video = `${project.path}/${project.name}_9_16.mp4`;
         await ffmpeg(
             `-i "${mergeSrc}" -vf "scale=1080:-1,pad=1080:1920:0:(oh-ih)/2,setsar=sar=1/1,setdar=dar=9/16" -c:a copy ${video}`,
             `视频转码`,
         );
     }
     const bgMusic = await getBgMusic(project, video);
-    const output = `${project.output}/${project.name}/${project.name}.mp4`;
+    const output = `${project.path}/${project.name}.mp4`;
     await ffmpeg(
         `-i ${video} -i ${bgMusic} -filter_complex "[0:a][1:a]amerge[a]" -map 0:v -map "[a]" ${output}`,
         '合成视频、音频 [3/3]',

@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 
 import { message } from 'antd';
+import { dispatch } from '../store';
 
 message.config({
   duration: 3,
@@ -25,8 +26,11 @@ export default async function invoke(channel, data) {
     console.info(`结果：`, `(+${end - start}ms)`, resp);
     return resp;
   } catch (e) {
+    if (e.code === -2) {
+      dispatch({ type: 'SHOW_LOGIN_MODEL' });
+    }
     console.error(`结果：`, e);
-    message.error(resp.error);
+    message.error(resp.error || resp.message || resp.msg);
     throw e;
   } finally {
     console.groupEnd();

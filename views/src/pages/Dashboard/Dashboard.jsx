@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Layout, Popconfirm, Space, Typography, Divider, TitleBar } from '../../components';
+import { Layout, Popconfirm, TitleBar } from '../../components';
 import { PlusCircleFilled, DeleteOutlined } from '@ant-design/icons';
 import namespace from '../../utils/namespace';
 import invoke from "../../utils/invoke";

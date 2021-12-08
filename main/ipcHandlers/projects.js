@@ -66,6 +66,18 @@ handle('post:/projects/clip', async (e, params) => {
 });
 
 /**
+ * 删除电影片段
+ */
+handle('delete:/projects/clip', async (e, params) => {
+    const path = `${params.project.path}/${params.clip.id}`;
+    // 删除项目的相关文件
+    if (fs.existsSync(path)) {
+        fs.rmSync(path, {force: true, recursive: true});
+    }
+    return dataSuccess();
+});
+
+/**
  * 视频转码关键帧
  */
 handle.handling('get:/projects/decode', async (reply, end, project) => {
@@ -82,7 +94,7 @@ handle.handling('get:/projects/decode', async (reply, end, project) => {
  * 合成预览
  */
 handle('get:/projects/preview', async (e, params) => {
-    const item = projectsModel.get(params.id);
+    const item = projectsModel.getById(params.id);
     if (!item) {
         return dataError('项目不存在');
     }
@@ -94,7 +106,7 @@ handle('get:/projects/preview', async (e, params) => {
  * 根据参数合成并导出项目
  */
 handle('get:/projects/export', async (e, params) => {
-    const item = projectsModel.get(params.project.id);
+    const item = projectsModel.getById(params.project.id);
     if (!item) {
         return dataError('项目不存在');
     }

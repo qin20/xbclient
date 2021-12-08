@@ -32,6 +32,7 @@ function createWindow() {
     }
 
     win.show();
+    win.maximize();
 
     // 自动更新
     log.transports.file.level = 'info';

@@ -1,7 +1,7 @@
 const path = require('path');
-const BaseModel = require('./Base');
-const {app} = require('electron');
 const {uuid} = require('uuidv4');
+const BaseModel = require('./Base');
+const {tempPath} = require('../utils/utils');
 
 class Projects extends BaseModel {
     constructor() {
@@ -14,8 +14,7 @@ class Projects extends BaseModel {
         return {
             'id': id,
             'name': '未命名',
-            'path': path.join(app.getPath('userData'), 'temp_data', id),
-            // 'path': `${app.getPath('userData')}/temp_data/${id}`,
+            'path': path.join(tempPath, id),
             'source': '', // 转码后的source
             // '_source': '', // 源source
             // 'decodeProgress': '', // 转码进度

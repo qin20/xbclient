@@ -20,6 +20,7 @@
     "axios": "^0.21.4",
     "cleave.js": "^1.6.0",
     "color": "3.0",
+    "moment": "^2.29.1",
     "normalize.css": "^8.0.1",
     "react": "^17.0.2",
     "react-awesome-player": "^1.1.0",
